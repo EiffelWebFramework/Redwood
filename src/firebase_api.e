@@ -99,7 +99,7 @@ feature -- REST API
 		local
 			l_request: REQUEST
 		do
-			create l_request.make ("GET", new_uri (a_path))
+			create l_request.make ("DELETE", new_uri (a_path))
 			Result := l_request.execute
 		end
 
