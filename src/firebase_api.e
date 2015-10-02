@@ -1,9 +1,8 @@
 note
-	description: "Summary description for {FIREBASE_API}."
-	author: ""
+	description: "Firebase API"
 	date: "$Date$"
 	revision: "$Revision$"
-	EIS: "name=Firebase REST API", "src=https://www.firebase.com/docs/rest-api.html", "protocol=uri"
+	EIS: "name=Firebase REST API", "src=https://www.firebase.com/docs/rest/api/", "protocol=uri"
 class
 	FIREBASE_API
 
@@ -17,7 +16,7 @@ create
 
 feature {NONE} -- Initialization
 
-	make (a_base_uri: READABLE_STRING_32)
+	make (a_base_uri: READABLE_STRING_8)
 			-- Create an object firebase with a base uri `a_base_uri'
 		do
 			base_uri := a_base_uri
@@ -27,8 +26,8 @@ feature {NONE} -- Initialization
 			empty_auth: auth.is_empty
 		end
 
-	make_with_auth (a_base_uri: READABLE_STRING_32; a_auth: READABLE_STRING_32)
-			-- Create an object firebase with a base uri `a_base_uri'
+	make_with_auth (a_base_uri: READABLE_STRING_8; a_auth: READABLE_STRING_8)
+			-- Create an object firebase with a base uri `a_base_uri'.
 		do
 			base_uri := a_base_uri
 			auth := a_auth
@@ -39,16 +38,19 @@ feature {NONE} -- Initialization
 
 feature -- Access
 
-	base_uri: READABLE_STRING_32
+	base_uri: READABLE_STRING_8
+			-- base uri.
 
-	auth: READABLE_STRING_32
+	auth: READABLE_STRING_8
+			-- firebase authentication token or app's secret.
 
-	Firebase_api_json_extension: STRING_32 = ".json"
+	Firebase_api_json_extension: STRING_8 = ".json"
+			-- URL firebase extension.
 
 feature -- REST API
 
-	get (a_path: detachable READABLE_STRING_32): detachable RESPONSE
-			-- Reading Data
+	get (a_path: detachable READABLE_STRING_8): detachable RESPONSE
+			-- Reading Data.
 		local
 			l_request: REQUEST
 		do
@@ -57,8 +59,8 @@ feature -- REST API
 		end
 
 
-     put (a_path: detachable READABLE_STRING_32; a_value: READABLE_STRING_32): detachable RESPONSE
-     		-- Writing data
+     put (a_path: detachable READABLE_STRING_8; a_value: READABLE_STRING_8): detachable RESPONSE
+     		-- Writing data.
      	require
      		is_json_value: is_valid_json (a_value)
 	    local
@@ -69,8 +71,8 @@ feature -- REST API
 			Result := l_request.execute
 		end
 
- 	 post (a_path: detachable READABLE_STRING_32; a_value: READABLE_STRING_32): detachable RESPONSE
-     		-- Pushing Data
+ 	 post (a_path: detachable READABLE_STRING_8; a_value: READABLE_STRING_8): detachable RESPONSE
+     		-- Pushing Data.
      	require
      		is_json_value: is_valid_json (a_value)
 	    local
@@ -81,8 +83,8 @@ feature -- REST API
 			Result := l_request.execute
 		end
 
-	 patch (a_path: detachable READABLE_STRING_32; a_value: READABLE_STRING_32): detachable RESPONSE
-     		-- Updating Data
+	 patch (a_path: detachable READABLE_STRING_8; a_value: READABLE_STRING_8): detachable RESPONSE
+     		-- Updating Data.
      	require
      		is_json_value: is_valid_json (a_value)
 	    local
@@ -94,8 +96,8 @@ feature -- REST API
 		end
 
 
-	delete (a_path: detachable READABLE_STRING_32): detachable RESPONSE
-			-- Removing Data
+	delete (a_path: detachable READABLE_STRING_8): detachable RESPONSE
+			-- Removing Data.
 		local
 			l_request: REQUEST
 		do
@@ -106,7 +108,7 @@ feature -- REST API
 
 feature -- Query
 
-	is_valid_json (a_value: READABLE_STRING_32): BOOLEAN
+	is_valid_json (a_value: READABLE_STRING_8): BOOLEAN
 			-- Is a_value a valid json representation?
 		do
 			Result := attached json.value (a_value)
@@ -114,7 +116,7 @@ feature -- Query
 
 feature {NONE} -- Implementation
 
-	new_uri (a_path: detachable READABLE_STRING_32): STRING_32
+	new_uri (a_path: detachable READABLE_STRING_8): STRING_32
 			-- new uri (base_uri + a_path)
 		local
 			l_path : STRING_32
@@ -135,7 +137,7 @@ feature {NONE} -- Implementation
 			end
 		end
 note
-	copyright: "2011-2013 Javier Velilla, Jocelyn Fiat, Eiffel Software and others"
+	copyright: "2011-2015 Javier Velilla, Jocelyn Fiat, Eiffel Software and others"
 	license: "Eiffel Forum License v2 (see http://www.eiffel.com/licensing/forum.txt)"
 	source: "[
 			Eiffel Software
