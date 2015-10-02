@@ -1,6 +1,5 @@
 note
-	description: "Summary description for {RESPONSE}."
-	author: ""
+	description: "Represent and  HTTP Response"
 	date: "$Date$"
 	revision: "$Revision$"
 
@@ -49,7 +48,7 @@ feature {NONE} -- Implementation
 
 
 ;note
-	copyright: "2011-2013 Javier Velilla, Jocelyn Fiat, Eiffel Software and others"
+	copyright: "2011-2015 Javier Velilla, Jocelyn Fiat, Eiffel Software and others"
 	license: "Eiffel Forum License v2 (see http://www.eiffel.com/licensing/forum.txt)"
 	source: "[
 			Eiffel Software

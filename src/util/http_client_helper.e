@@ -1,6 +1,5 @@
 note
 	description: "Summary description for {HTTP_CLIENT_HELPER}."
-	author: ""
 	date: "$Date$"
 	revision: "$Revision$"
 
@@ -89,7 +88,7 @@ feature -- HTTP client helpers
 	base_url: STRING
 
 ;note
-	copyright: "2011-2013 Javier Velilla, Jocelyn Fiat, Eiffel Software and others"
+	copyright: "2011-2015 Javier Velilla, Jocelyn Fiat, Eiffel Software and others"
 	license: "Eiffel Forum License v2 (see http://www.eiffel.com/licensing/forum.txt)"
 	source: "[
 			Eiffel Software

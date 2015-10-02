@@ -1,6 +1,5 @@
 note
-	description: "Summary description for {REQUEST}."
-	author: ""
+	description: "Represent and HTTP request."
 	date: "$Date$"
 	revision: "$Revision$"
 
@@ -16,7 +15,7 @@ create
 
 feature {NONE} -- Initialization
 
-	make (a_method: READABLE_STRING_GENERAL; a_uri: READABLE_STRING_GENERAL)
+	make (a_method: READABLE_STRING_8; a_uri: READABLE_STRING_8)
 		require
 			valid_http_method: is_http_method (a_method)
 			valid_uri: is_valid_uri (a_uri)
@@ -31,24 +30,26 @@ feature {NONE} -- Initialization
 
 feature -- Status Report
 
-	is_valid_uri (a_uri: READABLE_STRING_GENERAL): BOOLEAN
+	is_valid_uri (a_uri: READABLE_STRING_8): BOOLEAN
+			-- Is the uri `a_uri' valid?
 		local
 			l_uri: URI
 		do
-			create l_uri.make_from_string (a_uri.as_string_8)
+			create l_uri.make_from_string (a_uri)
 			Result := l_uri.is_valid
 		end
 
-	query_string: detachable READABLE_STRING_GENERAL
+	query_string: detachable READABLE_STRING_8
+			-- Return the query string of this request if any.
 		local
 			l_uri: URI
 		do
-			create l_uri.make_from_string (uri.as_string_8)
+			create l_uri.make_from_string (uri)
 			Result := l_uri.query
 		end
 
-	sanitized_url: STRING_32
-			-- Returns the URL without the query string part	
+	sanitized_url: STRING_8
+			-- Returns the URL without the query string part.	
 		local
 			l_uri: URI
 		do
@@ -59,7 +60,8 @@ feature -- Status Report
 			sanitized: not as_uri (Result).has_query
 		end
 
-	is_http_method (a_method: READABLE_STRING_GENERAL): BOOLEAN
+	is_http_method (a_method: READABLE_STRING_8): BOOLEAN
+			-- Is `a_method' an HTTP method?
 		do
 			if a_method.same_string (method_connect) then
 				Result := True
@@ -84,29 +86,36 @@ feature -- Status Report
 
 feature -- Constants
 
-	content_type_header_name: STRING_32 = "Content-Type";
+	content_type_header_name: STRING_8 = "Content-Type";
+			-- Content type header.
 
-	default_content_type: STRING
+	default_content_type: STRING_8
+			-- content type.
 		once
 			Result := application_json
 		end
 
 feature -- Access
 
-	uri: READABLE_STRING_GENERAL
+	uri: STRING_8
+			-- uri of this request.
 
-	verb: READABLE_STRING_GENERAL
+	verb: STRING_8
+			-- http methods for this request (GET, POST, etc)
 
 	headers: STRING_TABLE [STRING]
+			-- http headers for this request.
 
-	payload: detachable STRING
+	payload: detachable STRING_8
+			-- payload for this request.
 
 	executor: detachable REQUEST_EXECUTOR
+			-- execution for this request.
 
 feature -- Change Element
 
-
 	add_payload (a_payload: like payload)
+			-- add payload `a_payload'
 		do
 			payload := a_payload
 		ensure
@@ -114,17 +123,21 @@ feature -- Change Element
 		end
 
 
-	add_header (key: READABLE_STRING_GENERAL; value: READABLE_STRING_GENERAL)
+	add_header (a_key: READABLE_STRING_8; a_value: READABLE_STRING_8)
+			-- add header with key `a_key' and value `a_value'
 		do
-			headers.force (value.as_string_32, key)
+			headers.force (a_value, a_key)
+		ensure
+			header_added: headers.has_key (a_key)
 		end
 
 feature -- Execute
 
 	execute: detachable RESPONSE
+			-- execute the this request.
 		do
 			initialize_executor
-			Result := do_execute
+			Result := process_request
 		end
 
 	initialize_executor
@@ -134,7 +147,8 @@ feature -- Execute
 
 feature {NONE} -- Implementation
 
-	do_execute: detachable RESPONSE
+	process_request: detachable RESPONSE
+			--
 		do
 			if attached executor as l_executor then
 					-- add headers
@@ -154,6 +168,7 @@ feature {NONE} -- Implementation
 feature {NONE} -- Implementation
 
 	add_headers (a_executor: REQUEST_EXECUTOR)
+			-- add headers to the request executor `a_executor'
 		do
 			from
 				headers.start
@@ -165,7 +180,7 @@ feature {NONE} -- Implementation
 			end
 		end
 
-	body_contents: READABLE_STRING_GENERAL
+	body_contents: READABLE_STRING_8
 		do
 			if attached payload as l_payload then
 				Result := l_payload
@@ -174,15 +189,15 @@ feature {NONE} -- Implementation
 			end
 		end
 
-	as_uri (a_string: READABLE_STRING_GENERAL) : URI
+	as_uri (a_string: READABLE_STRING_8) : URI
 		require
 			is_valid_uri : is_valid_uri (a_string)
 		do
-			create Result.make_from_string (a_string.as_string_8)
+			create Result.make_from_string (a_string)
 		end
 
 note
-	copyright: "2011-2013 Javier Velilla, Jocelyn Fiat, Eiffel Software and others"
+	copyright: "2011-2015 Javier Velilla, Jocelyn Fiat, Eiffel Software and others"
 	license: "Eiffel Forum License v2 (see http://www.eiffel.com/licensing/forum.txt)"
 	source: "[
 			Eiffel Software

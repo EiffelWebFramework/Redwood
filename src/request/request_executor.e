@@ -1,6 +1,5 @@
 note
-	description: "Summary description for {REQUEST_EXECUTOR}."
-	author: ""
+	description: "Executes an HTTP Request"
 	date: "$Date$"
 	revision: "$Revision$"
 
@@ -18,7 +17,7 @@ create
 
 feature {NONE} -- Initialization
 
-	make (a_url: like base_url; a_method: READABLE_STRING_GENERAL)
+	make (a_url: like base_url; a_method: READABLE_STRING_8)
 		do
 			set_base_url (a_url)
 			verb := a_method
@@ -37,7 +36,7 @@ feature {NONE} -- Initialization
 
 feature -- Access
 
-	verb: READABLE_STRING_GENERAL
+	verb: READABLE_STRING_8
 			-- HTTP METHOD (Get, Post, ...)
 
 	body: detachable READABLE_STRING_8
@@ -80,7 +79,7 @@ feature -- Execute
 		end
 
 note
-	copyright: "2011-2013 Javier Velilla, Jocelyn Fiat, Eiffel Software and others"
+	copyright: "2011-2015 Javier Velilla, Jocelyn Fiat, Eiffel Software and others"
 	license: "Eiffel Forum License v2 (see http://www.eiffel.com/licensing/forum.txt)"
 	source: "[
 			Eiffel Software
