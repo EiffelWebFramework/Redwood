@@ -20,28 +20,30 @@ feature {NONE} -- Initialization
 			value: READABLE_STRING_8
 
 			getResponse: detachable RESPONSE
-			-- putResponse: detachable RESPONSE
+			putResponse: detachable RESPONSE
 			-- postResponse: detachable RESPONSE
 			-- patchResponse: detachable RESPONSE
 			-- deleteResponse: detachable RESPONSE
         do
 			-- Create API
-    		-- create api.make_with_auth("https://fiery-fire-4173.firebaseio.com", "33ZXLlDjqpdLzb6DiAi17KkAA6qvzkF40M3MKxWL")
-			create api.make("https://samplechat.firebaseio-demo.com")
+			-- create api.make("https://samplechat.firebaseio-demo.com")
+    		create api.make_with_auth("https://fiery-fire-4173.firebaseio.com", "33ZXLlDjqpdLzb6DiAi17KkAA6qvzkF40M3MKxWL")
+			create api.make("https://fiery-fire-4173.firebaseio.com")
 
 			-- Test GET
 			api.set_print_format("pretty")
-			getResponse := api.get("/users/jack/name")
+			getResponse := api.get("/keyA")
 			if getResponse /= Void then
 				print(getResponse.body)
 			end
 
 			-- TEST PUT
-			-- value := "{%"keyB%": %"valueB%"}"
-			-- putResponse := api.put("keyB", value)
-			-- if putResponse /= Void then
-			--    print(putResponse.body)
-			-- end
+			api.set_print_format("silent")
+			value := "{%"keyB%": %"valueB%"}"
+			putResponse := api.put("keyB", value)
+			if putResponse /= Void then
+			   print(putResponse.body)
+			end
 
 			-- TEST POST
 			-- value := "{%"keyC%": %"valueC%"}"

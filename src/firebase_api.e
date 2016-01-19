@@ -139,11 +139,11 @@ feature {NONE} -- Implementation
 			if attached print_format as ll_print then
 				Result.append("?print=" + ll_print)
 			end
-			print("%NResult: " + Result + "%N")
 
 			if not auth.is_empty then
 				Result.append("?auth=" + auth )
 			end
+			print("%NResult: " + Result + "%N")
 		end
 
 
