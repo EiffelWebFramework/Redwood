@@ -30,7 +30,8 @@ feature {NONE} -- Initialization
 			create api.make("https://samplechat.firebaseio-demo.com")
 
 			-- Test GET
-			getResponse := api.get("/users/jack/name", "silent")
+			api.set_print_format("pretty")
+			getResponse := api.get("/users/jack/name")
 			if getResponse /= Void then
 				print(getResponse.body)
 			end
