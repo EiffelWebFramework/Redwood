@@ -51,6 +51,10 @@ feature -- Access
 			-- Formats the data returned in the response from the server.
 			-- Value is either "pretty" or "silent".
 
+	is_shallow: detachable BOOLEAN
+			-- Limits the depth of the response.
+			-- Shallow cannot be mixed with other parameters.
+
 feature -- REST API
 
 	get (a_path: detachable READABLE_STRING_8): detachable RESPONSE
@@ -136,13 +140,21 @@ feature {NONE} -- Implementation
 			end
 
 			Result := base_uri + l_path + Firebase_api_json_extension
+			
 			if attached print_format as ll_print then
 				Result.append("?print=" + ll_print)
+			end
+
+			if attached is_shallow as ll_shallow then
+				if ll_shallow = True then
+					Result.append("?shallow=true")
+				end
 			end
 
 			if not auth.is_empty then
 				Result.append("?auth=" + auth )
 			end
+
 			print("%NResult: " + Result + "%N")
 		end
 
@@ -159,6 +171,20 @@ feature -- printFormat
 	-- ensure
 	--    format_set: attached option as l_format and then l_format.same_string ("pretty") or l_format.same_string ("silent")
 		end
+
+
+feature -- shallow
+
+	set_shallow (option: detachable BOOLEAN)
+		do
+			if option = True then
+				is_shallow := True
+			else
+				is_shallow := False
+			end
+		-- ensure is_shallow is either True or False
+		-- ensure that the other query options are not set (printFormat, auth?)
+	end
 
 
 note

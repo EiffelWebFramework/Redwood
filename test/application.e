@@ -31,19 +31,20 @@ feature {NONE} -- Initialization
 			create api.make("https://fiery-fire-4173.firebaseio.com")
 
 			-- Test GET
-			api.set_print_format("pretty")
+			-- api.set_print_format("pretty")
+			api.set_shallow(True)
 			getResponse := api.get("/keyA")
-			if getResponse /= Void then
-				print(getResponse.body)
+		    if getResponse /= Void then
+			   print(getResponse.body)
 			end
 
 			-- TEST PUT
-			api.set_print_format("silent")
-			value := "{%"keyB%": %"valueB%"}"
-			putResponse := api.put("keyB", value)
-			if putResponse /= Void then
-			   print(putResponse.body)
-			end
+			-- api.set_print_format("silent")
+			-- value := "{%"keyB%": %"valueB%"}"
+			-- putResponse := api.put("keyB", value)
+			-- if putResponse /= Void then
+			--    print(putResponse.body)
+			-- end
 
 			-- TEST POST
 			-- value := "{%"keyC%": %"valueC%"}"
