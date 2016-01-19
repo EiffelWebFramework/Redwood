@@ -49,37 +49,12 @@ feature -- Access
 
 feature -- REST API
 
-	get (a_path: detachable READABLE_STRING_8; print_format: detachable READABLE_STRING_8): detachable RESPONSE
+	get (a_path: detachable READABLE_STRING_8): detachable RESPONSE
 			-- Reading Data.
 		local
 			l_request: REQUEST
-			path: detachable READABLE_STRING_8
-			query: detachable READABLE_STRING_8
 		do
-			path := a_path
-			query := Void
-			if a_path /= Void then
-				if print_format /= Void then
-					if equal(print_format, "pretty") then
-						print("%N is pretty %N")
-						query := "print=pretty"
-					end
-					if equal(print_format, "silent") then
-						print("%N is pretty %N")
-						query := "print=silent"
-					end
-				end
-			end
-
-			if path /= Void then
-				print("%N path: " + path + "%N")
-			end
-
-			if query /= Void then
-				print("%N query: " + query + "%N")
-			end
-
-			create l_request.make ("GET", new_uri (path, query))
+			create l_request.make ("GET", new_uri (a_path))
 			Result := l_request.execute
 		end
 
@@ -91,7 +66,7 @@ feature -- REST API
 	    local
 			l_request: REQUEST
 		do
-			create l_request.make ("PUT", new_uri (a_path, Void))
+			create l_request.make ("PUT", new_uri (a_path))
 			l_request.add_payload (a_value)
 			Result := l_request.execute
 		end
@@ -103,7 +78,7 @@ feature -- REST API
 	    local
 			l_request: REQUEST
 		do
-			create l_request.make ("POST", new_uri (a_path, Void))
+			create l_request.make ("POST", new_uri (a_path))
 			l_request.add_payload (a_value)
 			Result := l_request.execute
 		end
@@ -115,7 +90,7 @@ feature -- REST API
 	    local
 			l_request: REQUEST
 		do
-			create l_request.make ("PATCH", new_uri (a_path, Void))
+			create l_request.make ("PATCH", new_uri (a_path))
 			l_request.add_payload (a_value)
 			Result := l_request.execute
 		end
@@ -126,7 +101,7 @@ feature -- REST API
 		local
 			l_request: REQUEST
 		do
-			create l_request.make ("DELETE", new_uri (a_path, Void))
+			create l_request.make ("DELETE", new_uri (a_path))
 			Result := l_request.execute
 		end
 
@@ -141,35 +116,22 @@ feature -- Query
 
 feature {NONE} -- Implementation
 
-	new_uri (a_path: detachable READABLE_STRING_8; a_query: detachable READABLE_STRING_8): STRING_32
-			-- TODO need to consider multiple parameters/queries
-			-- list of strings/queries, concatenate them together using '&'
+	new_uri (a_path: detachable READABLE_STRING_8): STRING_32
+			-- new uri (base_uri + a_path)
 		local
 			l_path : STRING_32
-			l_query: STRING_32
+			l_query_string: STRING_32
 		do
 			if attached a_path as ll_path then
 				l_path := ll_path
 			else
 				l_path := ""
 			end
-
-			if attached a_query as ll_query then
-				l_query := ll_query
-			else
-				l_query := ""
-			end
-
 			if not l_path.is_empty and then not (l_path.starts_with ("/") or l_path.starts_with ("\")) then
 				l_path.prepend("/")
 			end
 
 			Result := base_uri + l_path + Firebase_api_json_extension
-			if l_query /= "" then
-				Result := Result + "?" + l_query
-			end
-			print("%N" + Result + "%N")
-
 			if not auth.is_empty then
 				Result.append ("?auth="+ auth )
 			end

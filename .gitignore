@@ -1,3 +1,7 @@
-# Directories to ignore.
+# Directories and patterns to ignore.
 EIFGENs
 .git
+.svn/
+*.swp
+*~
+*#
