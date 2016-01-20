@@ -55,6 +55,9 @@ feature -- Access
 			-- Limits the depth of the response.
 			-- Shallow cannot be mixed with other parameters.
 
+	format_response: detachable READABLE_STRING_8
+			-- Server will encode priorities in response if format is set to export.
+
 feature -- REST API
 
 	get (a_path: detachable READABLE_STRING_8): detachable RESPONSE
@@ -125,9 +128,9 @@ feature -- Query
 feature {NONE} -- Implementation
 
 	new_uri (a_path: detachable READABLE_STRING_8): STRING_32
-			-- TODO need to consider multiple parameters/queries
 		local
 			l_path : STRING_32
+			number_of_queries: INTEGER
 		do
 			if attached a_path as ll_path then
 				l_path := ll_path
@@ -140,19 +143,49 @@ feature {NONE} -- Implementation
 			end
 
 			Result := base_uri + l_path + Firebase_api_json_extension
-			
+			number_of_queries := 0
+
 			if attached print_format as ll_print then
-				Result.append("?print=" + ll_print)
+				if number_of_queries = 0 then
+					Result.append("?")
+				else
+					Result.append("&")
+				end
+				Result.append("print=" + ll_print)
+				number_of_queries := number_of_queries + 1
+			end
+
+			if attached format_response as ll_format then
+				if number_of_queries = 0 then
+					Result.append("?")
+				else
+					Result.append("&")
+				end
+				Result.append("format=" + ll_format)
+				number_of_queries := number_of_queries + 1
+			end
+
+			if not auth.is_empty then
+				if number_of_queries = 0 then
+					Result.append("?")
+				else
+					Result.append("&")
+				end
+				Result.append("?auth=" + auth )
+				number_of_queries := number_of_queries + 1
 			end
 
 			if attached is_shallow as ll_shallow then
 				if ll_shallow = True then
-					Result.append("?shallow=true")
+					-- TODO: Add assert that number_of_queries = 0
+					if number_of_queries = 0 then
+						Result.append("?")
+					else
+						Result.append("&")
+					end
+					Result.append("shallow=true")
+					number_of_queries := number_of_queries + 1
 				end
-			end
-
-			if not auth.is_empty then
-				Result.append("?auth=" + auth )
 			end
 
 			print("%NResult: " + Result + "%N")
@@ -179,13 +212,21 @@ feature -- shallow
 		do
 			if option = True then
 				is_shallow := True
-			else
-				is_shallow := False
 			end
-		-- ensure is_shallow is either True or False
+		-- ensure is_shallow is True if set
 		-- ensure that the other query options are not set (printFormat, auth?)
 	end
 
+
+feature -- format
+
+	set_format_response (option: detachable READABLE_STRING_8)
+		do
+			if option /= Void then
+				format_response := option
+			end
+		end
+		-- ensure that format_response is only "export"
 
 note
 	copyright: "2011-2015 Javier Velilla, Jocelyn Fiat, Eiffel Software and others"

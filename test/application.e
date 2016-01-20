@@ -27,12 +27,13 @@ feature {NONE} -- Initialization
         do
 			-- Create API
 			-- create api.make("https://samplechat.firebaseio-demo.com")
-    		create api.make_with_auth("https://fiery-fire-4173.firebaseio.com", "33ZXLlDjqpdLzb6DiAi17KkAA6qvzkF40M3MKxWL")
+    		-- create api.make_with_auth("https://fiery-fire-4173.firebaseio.com", "33ZXLlDjqpdLzb6DiAi17KkAA6qvzkF40M3MKxWL")
 			create api.make("https://fiery-fire-4173.firebaseio.com")
 
 			-- Test GET
-			-- api.set_print_format("pretty")
-			api.set_shallow(True)
+			-- api.set_shallow(True)
+			api.set_print_format("pretty")
+			api.set_format_response("export")
 			getResponse := api.get("/keyA")
 		    if getResponse /= Void then
 			   print(getResponse.body)
