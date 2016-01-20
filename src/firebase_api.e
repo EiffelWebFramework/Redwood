@@ -129,7 +129,8 @@ feature {NONE} -- Implementation
 
 	new_uri (a_path: detachable READABLE_STRING_8): STRING_32
 		local
-			l_path : STRING_32
+			l_path: STRING_32
+			l_query: STRING_32
 			number_of_queries: INTEGER
 		do
 			if attached a_path as ll_path then
@@ -142,52 +143,53 @@ feature {NONE} -- Implementation
 				l_path.prepend("/")
 			end
 
-			Result := base_uri + l_path + Firebase_api_json_extension
 			number_of_queries := 0
-
+			l_query := ""
 			if attached print_format as ll_print then
 				if number_of_queries = 0 then
-					Result.append("?")
+					l_query.append("?")
 				else
-					Result.append("&")
+					l_query.append("&")
 				end
-				Result.append("print=" + ll_print)
+				l_query.append("print=" + ll_print)
 				number_of_queries := number_of_queries + 1
 			end
 
 			if attached format_response as ll_format then
 				if number_of_queries = 0 then
-					Result.append("?")
+					l_query.append("?")
 				else
-					Result.append("&")
+					l_query.append("&")
 				end
-				Result.append("format=" + ll_format)
+				l_query.append("format=" + ll_format)
 				number_of_queries := number_of_queries + 1
 			end
 
 			if not auth.is_empty then
 				if number_of_queries = 0 then
-					Result.append("?")
+					l_query.append("?")
 				else
-					Result.append("&")
+					l_query.append("&")
 				end
-				Result.append("?auth=" + auth )
+				l_query.append("?auth=" + auth )
 				number_of_queries := number_of_queries + 1
 			end
 
 			if attached is_shallow as ll_shallow then
+				-- TODO: Find out why is_shallow is False by default.
 				if ll_shallow = True then
 					-- TODO: Add assert that number_of_queries = 0
 					if number_of_queries = 0 then
-						Result.append("?")
+						l_query.append("?")
 					else
-						Result.append("&")
+						l_query.append("&")
 					end
-					Result.append("shallow=true")
+					l_query.append("shallow=true")
 					number_of_queries := number_of_queries + 1
 				end
 			end
 
+			Result := base_uri + l_path + Firebase_api_json_extension + l_query
 			print("%NResult: " + Result + "%N")
 		end
 
