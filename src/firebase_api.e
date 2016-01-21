@@ -36,6 +36,7 @@ feature {NONE} -- Initialization
 			auth_set: auth = a_auth
 		end
 
+
 feature -- Access
 
 	base_uri: READABLE_STRING_8
@@ -49,7 +50,14 @@ feature -- Access
 
 	print_format: detachable READABLE_STRING_8
 			-- Formats the data returned in the response from the server.
-			-- Value is either "pretty" or "silent".
+			-- Value is either "pretty", "silent" or Void.
+
+	is_shallow: detachable BOOLEAN
+			-- Limits the depth of the response.
+			-- Shallow cannot be mixed with other parameters.
+
+	format_response: detachable READABLE_STRING_8
+			-- Server will encode priorities in response if format is set to export.
 
 feature -- REST API
 
@@ -121,9 +129,10 @@ feature -- Query
 feature {NONE} -- Implementation
 
 	new_uri (a_path: detachable READABLE_STRING_8): STRING_32
-			-- TODO need to consider multiple parameters/queries
 		local
-			l_path : STRING_32
+			l_path: STRING_32
+			l_query: STRING_32
+			number_of_queries: INTEGER
 		do
 			if attached a_path as ll_path then
 				l_path := ll_path
@@ -135,15 +144,54 @@ feature {NONE} -- Implementation
 				l_path.prepend("/")
 			end
 
-			Result := base_uri + l_path + Firebase_api_json_extension
+			number_of_queries := 0
+			l_query := ""
 			if attached print_format as ll_print then
-				Result.append("?print=" + ll_print)
+				if number_of_queries = 0 then
+					l_query.append("?")
+				else
+					l_query.append("&")
+				end
+				l_query.append("print=" + ll_print)
+				number_of_queries := number_of_queries + 1
 			end
-			print("%NResult: " + Result + "%N")
+
+			if attached format_response as ll_format then
+				if number_of_queries = 0 then
+					l_query.append("?")
+				else
+					l_query.append("&")
+				end
+				l_query.append("format=" + ll_format)
+				number_of_queries := number_of_queries + 1
+			end
 
 			if not auth.is_empty then
-				Result.append("?auth=" + auth )
+				if number_of_queries = 0 then
+					l_query.append("?")
+				else
+					l_query.append("&")
+				end
+				l_query.append("?auth=" + auth )
+				number_of_queries := number_of_queries + 1
 			end
+
+			if attached is_shallow as ll_shallow then
+				-- TODO: Find out why is_shallow is False by default.
+				if ll_shallow = True then
+					-- TODO: Add assert that number_of_queries = 0
+					if number_of_queries = 0 then
+						l_query.append("?")
+					else
+						l_query.append("&")
+					end
+					l_query.append("shallow=true")
+					number_of_queries := number_of_queries + 1
+				end
+			end
+
+			Result := base_uri + l_path + Firebase_api_json_extension + l_query
+			print("%NResult: " + Result + "%N")
 		end
 
 
@@ -159,6 +207,30 @@ feature -- printFormat
 	    ensure
 	       valid_option: attached option as l_format and then l_format.same_string ("pretty") or attached option as l_format and then l_format.same_string ("silent") or option = Void
 		end
+
+
+
+feature -- shallow
+
+	set_shallow (option: detachable BOOLEAN)
+		do
+			if option = True then
+				is_shallow := True
+			end
+		-- ensure is_shallow is True if set
+		-- ensure that the other query options are not set (printFormat, auth?)
+	end
+
+
+feature -- format
+
+	set_format_response (option: detachable READABLE_STRING_8)
+		do
+			if option /= Void then
+				format_response := option
+			end
+		end
+		-- ensure that format_response is only "export"
 
 
 note
