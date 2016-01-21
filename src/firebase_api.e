@@ -156,8 +156,8 @@ feature -- printFormat
 			else
 				print_format := Void
 			end
-	-- ensure
-	--    format_set: attached option as l_format and then l_format.same_string ("pretty") or l_format.same_string ("silent")
+	    ensure
+	       valid_option: attached option as l_format and then l_format.same_string ("pretty") or attached option as l_format and then l_format.same_string ("silent") or option = Void
 		end
 
 

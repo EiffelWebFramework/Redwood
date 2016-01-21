@@ -31,6 +31,8 @@ feature {NONE} -- Initialization
 
 			-- Test GET
 			api.set_print_format("pretty")
+			api.set_print_format("silent")
+			api.set_print_format(Void)
 			getResponse := api.get("/users/jack/name")
 			if getResponse /= Void then
 				print(getResponse.body)
