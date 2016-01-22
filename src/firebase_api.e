@@ -59,6 +59,19 @@ feature -- Access
 	format_response: detachable READABLE_STRING_8
 			-- Server will encode priorities in response if format is set to export.
 
+    order_by: detachable READABLE_STRING_8
+
+    start_at: detachable READABLE_STRING_8
+
+    end_at: detachable READABLE_STRING_8
+
+    equal_to: detachable READABLE_STRING_8
+
+    limit_to_first: detachable INTEGER
+
+    limit_to_last: detachable INTEGER
+
+
 feature -- REST API
 
 	get (a_path: detachable READABLE_STRING_8): detachable RESPONSE
@@ -166,6 +179,27 @@ feature {NONE} -- Implementation
 				number_of_queries := number_of_queries + 1
 			end
 
+            if attached order_by as ll_order_by then
+                if number_of_queries = 0 then
+                    l_query.append("?")
+                else
+                    l_query.append("&")
+                end
+                l_query.append("orderBy=" + ll_order_by)
+                number_of_queries := number_of_queries + 1
+            end
+
+            if attached start_at as ll_start_at then
+                if number_of_queries = 0 then
+                    l_query.append("?")
+                else
+                    l_query.append("&")
+                end
+                l_query.append("startAt=" + ll_start_at)
+                number_of_queries := number_of_queries + 1
+            end
+
+
 			if not auth.is_empty then
 				if number_of_queries = 0 then
 					l_query.append("?")
@@ -195,7 +229,7 @@ feature {NONE} -- Implementation
 		end
 
 
-feature -- printFormat
+feature -- print format
 
 	set_print_format (option: detachable READABLE_STRING_8)
 		do
@@ -205,7 +239,7 @@ feature -- printFormat
 				print_format := Void
 			end
 	    ensure
-	       valid_option: attached option as l_format and then l_format.same_string ("pretty") or attached option as l_format and then l_format.same_string ("silent") or option = Void
+	       valid_option: attached option as l_format and then (l_format.same_string ("pretty") or l_format.same_string ("silent") or option = Void)
 		end
 
 
@@ -214,12 +248,15 @@ feature -- shallow
 
 	set_shallow (option: detachable BOOLEAN)
 		do
-			if option = True then
-				is_shallow := True
-			end
+            if option /= Void then
+                is_shallow := option
+            -- else
+            --     is_shallow := Void
+            end
+        -- ensure
 		-- ensure is_shallow is True if set
 		-- ensure that the other query options are not set (printFormat, auth?)
-	end
+	    end
 
 
 feature -- format
@@ -231,6 +268,53 @@ feature -- format
 			end
 		end
 		-- ensure that format_response is only "export"
+
+
+feature -- filtering functions
+
+    set_order_by_type (value: detachable READABLE_STRING_8)
+        do
+            if value /= Void then
+                order_by := "%"$" + value + "%""
+            else
+                order_by := Void
+            end
+        ensure
+            valid_value: attached value as l_value and then (l_value.same_string ("key") or l_value.same_string ("value") or l_value.same_string ("priority"))
+        end
+
+    set_start_at_value (value: detachable READABLE_STRING_8)
+        do
+            if value /= Void then
+                if value.is_integer = TRUE then
+                    start_at := value
+                else
+                    start_at := "%"" + value + "%""
+                end
+            else
+                start_at := Void
+            end
+        end
+
+    set_end_at_value (value: detachable READABLE_STRING_8)
+        do
+            end_at := value
+        end
+
+    set_equal_to_value (value: detachable READABLE_STRING_8)
+        do
+            equal_to := value
+        end
+
+    set_limit_to_first_value (value: detachable INTEGER)
+        do
+            limit_to_first := value
+        end
+
+    set_limit_to_last_value (value: detachable INTEGER)
+        do
+            limit_to_last := value
+        end
 
 
 note

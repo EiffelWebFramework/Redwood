@@ -27,22 +27,38 @@ feature {NONE} -- Initialization
         do
 			-- Create API
     		-- create api.make_with_auth("https://fiery-fire-4173.firebaseio.com", "33ZXLlDjqpdLzb6DiAi17KkAA6qvzkF40M3MKxWL")
-			create api.make("https://samplechat.firebaseio-demo.com")
+			-- create api.make("https://samplechat.firebaseio-demo.com")
+            create api.make("https://fiery-fire-4173.firebaseio.com")
 
 			-- Test GET
 			api.set_print_format("pretty")
-			api.set_print_format("silent")
-			api.set_print_format(Void)
-			getResponse := api.get("/users/jack/name")
+            -- api.set_print_format(Void)
+
+            -- api.set_shallow(True)
+            -- print("set shallow to true %N")
+            -- api.set_shallow(Void)
+            -- print("set shallow to void %N")
+
+            -- api.set_format_response("export")
+            -- api.set_format_response(Void)
+
+            api.set_order_by_type("key")
+            api.set_start_at_value("d")
+            api.set_start_at_value(Void)
+
+            -- api.set_order_by_type("value")
+            -- api.set_start_at_value("50")
+
+		    getResponse := api.get("/scores")
 			if getResponse /= Void then
 				print(getResponse.body)
 			end
 
 			-- TEST PUT
-			-- value := "{%"keyB%": %"valueB%"}"
-			-- putResponse := api.put("keyB", value)
+			-- value := "{%".indexOn%": %".value%"}"
+			-- putResponse := api.put("/scores", value)
 			-- if putResponse /= Void then
-			--    print(putResponse.body)
+            --     print(putResponse.body)
 			-- end
 
 			-- TEST POST
