@@ -31,7 +31,7 @@ feature {NONE} -- Initialization
             create api.make("https://fiery-fire-4173.firebaseio.com")
 
 			-- Test GET
-			api.set_print_format("pretty")
+			-- api.set_print_format("pretty")
             -- api.set_print_format(Void)
 
             -- api.set_shallow(True)
@@ -44,7 +44,8 @@ feature {NONE} -- Initialization
 
             api.set_order_by_type("key")
             api.set_start_at_value("d")
-            api.set_start_at_value(Void)
+            api.set_end_at_value("i")
+            api.set_end_at_value(Void)
 
             -- api.set_order_by_type("value")
             -- api.set_start_at_value("50")

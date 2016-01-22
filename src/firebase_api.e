@@ -141,10 +141,21 @@ feature -- Query
 
 feature {NONE} -- Implementation
 
+    get_query_punctuation (number_of_queries: INTEGER): STRING
+        -- TODO: Find correct type to use.
+        do
+            if number_of_queries = 0 then
+                Result := "?"
+            else
+                Result := "&"
+            end
+        end
+
 	new_uri (a_path: detachable READABLE_STRING_8): STRING_32
 		local
 			l_path: STRING_32
 			l_query: STRING_32
+            query_punctuation: STRING   -- TODO: Find correct type to use.
 			number_of_queries: INTEGER
 		do
 			if attached a_path as ll_path then
@@ -160,53 +171,38 @@ feature {NONE} -- Implementation
 			number_of_queries := 0
 			l_query := ""
 			if attached print_format as ll_print then
-				if number_of_queries = 0 then
-					l_query.append("?")
-				else
-					l_query.append("&")
-				end
-				l_query.append("print=" + ll_print)
+                query_punctuation := get_query_punctuation(number_of_queries)
+				l_query.append(query_punctuation + "print=" + ll_print)
 				number_of_queries := number_of_queries + 1
 			end
 
 			if attached format_response as ll_format then
-				if number_of_queries = 0 then
-					l_query.append("?")
-				else
-					l_query.append("&")
-				end
-				l_query.append("format=" + ll_format)
+                query_punctuation := get_query_punctuation(number_of_queries)
+				l_query.append(query_punctuation + "format=" + ll_format)
 				number_of_queries := number_of_queries + 1
 			end
 
             if attached order_by as ll_order_by then
-                if number_of_queries = 0 then
-                    l_query.append("?")
-                else
-                    l_query.append("&")
-                end
-                l_query.append("orderBy=" + ll_order_by)
+                query_punctuation := get_query_punctuation(number_of_queries)
+                l_query.append(query_punctuation + "orderBy=" + ll_order_by)
                 number_of_queries := number_of_queries + 1
             end
 
             if attached start_at as ll_start_at then
-                if number_of_queries = 0 then
-                    l_query.append("?")
-                else
-                    l_query.append("&")
-                end
-                l_query.append("startAt=" + ll_start_at)
+                query_punctuation := get_query_punctuation(number_of_queries)
+                l_query.append(query_punctuation + "startAt=" + ll_start_at)
                 number_of_queries := number_of_queries + 1
             end
 
+            if attached end_at as ll_end_at then
+                query_punctuation := get_query_punctuation(number_of_queries)
+                l_query.append(query_punctuation + "endAt=" + ll_end_at)
+                number_of_queries := number_of_queries + 1
+            end
 
 			if not auth.is_empty then
-				if number_of_queries = 0 then
-					l_query.append("?")
-				else
-					l_query.append("&")
-				end
-				l_query.append("?auth=" + auth )
+				query_punctuation := get_query_punctuation(number_of_queries)
+				l_query.append(query_punctuation + "auth=" + auth )
 				number_of_queries := number_of_queries + 1
 			end
 
@@ -214,12 +210,8 @@ feature {NONE} -- Implementation
 				-- TODO: Find out why is_shallow is False by default.
 				if ll_shallow = True then
 					-- TODO: Add assert that number_of_queries = 0
-					if number_of_queries = 0 then
-						l_query.append("?")
-					else
-						l_query.append("&")
-					end
-					l_query.append("shallow=true")
+					query_punctuation := get_query_punctuation(number_of_queries)
+					l_query.append(query_punctuation + "shallow=true")
 					number_of_queries := number_of_queries + 1
 				end
 			end
@@ -241,7 +233,6 @@ feature -- print format
 	    ensure
 	       valid_option: attached option as l_format and then (l_format.same_string ("pretty") or l_format.same_string ("silent") or option = Void)
 		end
-
 
 
 feature -- shallow
@@ -298,7 +289,15 @@ feature -- filtering functions
 
     set_end_at_value (value: detachable READABLE_STRING_8)
         do
-            end_at := value
+            if value /= Void then
+                if value.is_integer = TRUE then
+                    end_at := value
+                else
+                    end_at := "%"" + value + "%""
+                end
+            else
+                end_at := Void
+            end
         end
 
     set_equal_to_value (value: detachable READABLE_STRING_8)
