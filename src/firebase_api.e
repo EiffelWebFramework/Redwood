@@ -74,7 +74,7 @@ feature -- Access
 
 feature -- REST API
 
-	get (a_path: detachable READABLE_STRING_8): detachable RESPONSE
+    get (a_path: detachable READABLE_STRING_8): detachable RESPONSE
 			-- Reading Data.
 		local
 			l_request: REQUEST
@@ -83,7 +83,7 @@ feature -- REST API
 			Result := l_request.execute
 		end
 
-     put (a_path: detachable READABLE_STRING_8; a_value: READABLE_STRING_8): detachable RESPONSE
+    put (a_path: detachable READABLE_STRING_8; a_value: READABLE_STRING_8): detachable RESPONSE
      		-- Writing data.
      	require
      		is_json_value: is_valid_json (a_value)
@@ -95,7 +95,7 @@ feature -- REST API
 			Result := l_request.execute
 		end
 
- 	 post (a_path: detachable READABLE_STRING_8; a_value: READABLE_STRING_8): detachable RESPONSE
+    post (a_path: detachable READABLE_STRING_8; a_value: READABLE_STRING_8): detachable RESPONSE
      		-- Pushing Data.
      	require
      		is_json_value: is_valid_json (a_value)
@@ -107,7 +107,7 @@ feature -- REST API
 			Result := l_request.execute
 		end
 
-	 patch (a_path: detachable READABLE_STRING_8; a_value: READABLE_STRING_8): detachable RESPONSE
+    patch (a_path: detachable READABLE_STRING_8; a_value: READABLE_STRING_8): detachable RESPONSE
      		-- Updating Data.
      	require
      		is_json_value: is_valid_json (a_value)
@@ -119,8 +119,7 @@ feature -- REST API
 			Result := l_request.execute
 		end
 
-
-	delete (a_path: detachable READABLE_STRING_8): detachable RESPONSE
+    delete (a_path: detachable READABLE_STRING_8): detachable RESPONSE
 			-- Removing Data.
 		local
 			l_request: REQUEST
@@ -132,7 +131,7 @@ feature -- REST API
 
 feature -- Query
 
-	is_valid_json (a_value: READABLE_STRING_8): BOOLEAN
+    is_valid_json (a_value: READABLE_STRING_8): BOOLEAN
 			-- Is a_value a valid json representation?
 		do
 			Result := attached json.value (a_value)
@@ -141,17 +140,7 @@ feature -- Query
 
 feature {NONE} -- Implementation
 
-    get_query_punctuation (number_of_queries: INTEGER): STRING
-        -- TODO: Find correct type to use.
-        do
-            if number_of_queries = 0 then
-                Result := "?"
-            else
-                Result := "&"
-            end
-        end
-
-	new_uri (a_path: detachable READABLE_STRING_8): STRING_32
+    new_uri (a_path: detachable READABLE_STRING_8): STRING_32
 		local
 			l_path: STRING_32
 			l_query: STRING_32
@@ -172,14 +161,14 @@ feature {NONE} -- Implementation
 			l_query := ""
 			if attached print_format as ll_print then
                 query_punctuation := get_query_punctuation(number_of_queries)
-				l_query.append(query_punctuation + "print=" + ll_print)
-				number_of_queries := number_of_queries + 1
+                l_query.append(query_punctuation + "print=" + ll_print)
+                number_of_queries := number_of_queries + 1
 			end
 
 			if attached format_response as ll_format then
                 query_punctuation := get_query_punctuation(number_of_queries)
-				l_query.append(query_punctuation + "format=" + ll_format)
-				number_of_queries := number_of_queries + 1
+                l_query.append(query_punctuation + "format=" + ll_format)
+                number_of_queries := number_of_queries + 1
 			end
 
             if attached order_by as ll_order_by then
@@ -201,25 +190,34 @@ feature {NONE} -- Implementation
             end
 
 			if not auth.is_empty then
-				query_punctuation := get_query_punctuation(number_of_queries)
-				l_query.append(query_punctuation + "auth=" + auth )
-				number_of_queries := number_of_queries + 1
+                query_punctuation := get_query_punctuation(number_of_queries)
+                l_query.append(query_punctuation + "auth=" + auth )
+                number_of_queries := number_of_queries + 1
 			end
 
 			if attached is_shallow as ll_shallow then
-				-- TODO: Find out why is_shallow is False by default.
-				if ll_shallow = True then
-					-- TODO: Add assert that number_of_queries = 0
-					query_punctuation := get_query_punctuation(number_of_queries)
-					l_query.append(query_punctuation + "shallow=true")
-					number_of_queries := number_of_queries + 1
-				end
-			end
+                -- TODO: Find out why is_shallow is False by default.
+                if ll_shallow = True then
+                    -- TODO: Add assert that number_of_queries = 0
+                    query_punctuation := get_query_punctuation(number_of_queries)
+                    l_query.append(query_punctuation + "shallow=true")
+                    number_of_queries := number_of_queries + 1
+                end
+            end
 
-			Result := base_uri + l_path + Firebase_api_json_extension + l_query
-			print("%NResult: " + Result + "%N")
+            Result := base_uri + l_path + Firebase_api_json_extension + l_query
+            print("%NResult: " + Result + "%N")
 		end
 
+    get_query_punctuation (number_of_queries: INTEGER): STRING
+        -- TODO: Find correct type to use.
+        do
+            if number_of_queries = 0 then
+                Result := "?"
+            else
+                Result := "&"
+            end
+        end
 
 feature -- print format
 
@@ -257,8 +255,9 @@ feature -- format
 			if option /= Void then
 				format_response := option
 			end
+        ensure
+            valid_option: attached option as l_format and then l_format.same_string ("export")
 		end
-		-- ensure that format_response is only "export"
 
 
 feature -- filtering functions

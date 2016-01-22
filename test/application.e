@@ -31,7 +31,7 @@ feature {NONE} -- Initialization
             create api.make("https://fiery-fire-4173.firebaseio.com")
 
 			-- Test GET
-			-- api.set_print_format("pretty")
+			api.set_print_format("pretty")
             -- api.set_print_format(Void)
 
             -- api.set_shallow(True)
@@ -40,7 +40,6 @@ feature {NONE} -- Initialization
             -- print("set shallow to void %N")
 
             -- api.set_format_response("export")
-            -- api.set_format_response(Void)
 
             api.set_order_by_type("key")
             api.set_start_at_value("d")
