@@ -358,12 +358,32 @@ feature -- filtering functions
     --     end
 
 
-feature -- priorities
+feature -- priority
     get_priority (value: BOOLEAN)
         do
             priority_get := value
         end
 
+
+feature -- rules
+    retrieve_rules () : detachable RESPONSE
+        local
+            l_request: REQUEST
+        do
+            create l_request.make ("GET", new_uri (".settings/rules"))
+            Result := l_request.execute
+        end
+
+    update_rules (a_value: READABLE_STRING_8): detachable RESPONSE
+        require
+            is_json_value: is_valid_json (a_value)
+        local
+            l_request: REQUEST
+        do
+            create l_request.make ("PUT", new_uri (".settings/rules"))
+            l_request.add_payload (a_value)
+            Result := l_request.execute
+        end
 
 note
 	copyright: "2011-2015 Javier Velilla, Jocelyn Fiat, Eiffel Software and others"

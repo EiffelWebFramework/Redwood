@@ -19,11 +19,7 @@ feature {NONE} -- Initialization
 			api: FIREBASE_API
 			value: READABLE_STRING_8
 
-			getResponse: detachable RESPONSE
-			-- putResponse: detachable RESPONSE
-			-- postResponse: detachable RESPONSE
-			-- patchResponse: detachable RESPONSE
-			-- deleteResponse: detachable RESPONSE
+			response: detachable RESPONSE
         do
 			-- Create API
 			-- create api.make("https://samplechat.firebaseio-demo.com")
@@ -52,39 +48,51 @@ feature {NONE} -- Initialization
 
             -- api.set_limit_to_first_value(3)
             -- api.get_priority(False)
-            getResponse := api.get("/scores/Duo")
-			if getResponse /= Void then
-			   print(getResponse.body)
-			end
+            -- response := api.get("/scores/Duo")
+			-- if response /= Void then
+			--    print(response.body)
+			-- end
 
 			-- TEST PUT
 			-- value := "{%".sv%": %"timestamp%"}"
             -- value := "{%".value%": 2, %".priority%": 6.0}"
-			-- putResponse := api.put("/scores/Duo", value)
-			-- if putResponse /= Void then
-            --    print(putResponse.body)
+			-- response := api.put("/scores/Duo", value)
+			-- if response /= Void then
+            --    print(response.body)
 			-- end
 
 			-- TEST POST
 		    -- value := "{%"Zoe%": 2}"
-			--  postResponse := api.post("/scores", value)
-			-- if postResponse /= Void then
-			--    print(postResponse.body)
+			--  response := api.post("/scores", value)
+			-- if response /= Void then
+			--    print(response.body)
 			-- end
 
 			-- TEST PATCH
 			-- value := "{%"Zoe%": 2}"
-			-- patchResponse := api.patch("/scores", value)
-			-- if patchResponse /= Void then
-		    --    print(patchResponse.body)
+			-- response := api.patch("/scores", value)
+			-- if response /= Void then
+		    --    print(response.body)
 			-- end
 
 			-- TEST DELETE
-			-- deleteResponse := api.delete("keyB")
-			-- if deleteResponse /= Void then
-			--    print(deleteResponse.body)
+			-- response := api.delete("keyB")
+			-- if response /= Void then
+			--    print(response.body)
 			-- end
 
+            -- TEST RETRIEVE_RULES
+            -- response := api.retrieve_rules()
+            -- if response /= Void then
+            --     print (response.body)
+            -- end
+
+            -- TEST UPDATE_RULES
+            value := "{%"rules%": {%".read%": true}}"
+            response := api.update_rules(value)
+            if response /= Void then
+                print (response.body)
+            end
         end
 
 end
