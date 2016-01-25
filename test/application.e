@@ -27,13 +27,11 @@ feature {NONE} -- Initialization
             create api.make_with_auth("https://fiery-fire-4173.firebaseio.com", "33ZXLlDjqpdLzb6DiAi17KkAA6qvzkF40M3MKxWL")
 
 			-- Test GET
-			-- api.set_print_format("pretty")
+			api.set_print_format("pretty")
             -- api.set_print_format(Void)
 
             -- api.set_shallow(True)
             -- print("set shallow to true %N")
-            -- api.set_shallow(Void)
-            -- print("set shallow to void %N")
 
             -- api.set_format_response("export")
 
@@ -48,10 +46,10 @@ feature {NONE} -- Initialization
 
             -- api.set_limit_to_first_value(3)
             -- api.get_priority(False)
-            -- response := api.get("/scores/Duo")
-			-- if response /= Void then
-			--    print(response.body)
-			-- end
+            response := api.get("/scores")
+			if response /= Void then
+			   print(response.body)
+			end
 
 			-- TEST PUT
 			-- value := "{%".sv%": %"timestamp%"}"
@@ -88,11 +86,11 @@ feature {NONE} -- Initialization
             -- end
 
             -- TEST UPDATE_RULES
-            value := "{%"rules%": {%".read%": true}}"
-            response := api.update_rules(value)
-            if response /= Void then
-                print (response.body)
-            end
+            -- value := "{%"rules%": {%".read%": true}}"
+            -- response := api.update_rules(value)
+            -- if response /= Void then
+            --     print (response.body)
+            -- end
         end
 
 end

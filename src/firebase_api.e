@@ -52,7 +52,7 @@ feature -- Access
 			-- Formats the data returned in the response from the server.
 			-- Value is either "pretty", "silent" or Void.
 
-	is_shallow: detachable BOOLEAN
+	is_shallow: BOOLEAN
 			-- Limits the depth of the response.
 			-- Shallow cannot be mixed with other parameters.
 
@@ -210,14 +210,11 @@ feature {NONE} -- Implementation
                 number_of_queries := number_of_queries + 1
             end
 
-			if attached is_shallow as ll_shallow then
-                -- TODO: Find out why is_shallow is False by default.
-                if ll_shallow = True then
-                    -- TODO: Add assert that number_of_queries = 0
-                    query_punctuation := get_query_punctuation(number_of_queries)
-                    l_query.append(query_punctuation + "shallow=true")
-                    number_of_queries := number_of_queries + 1
-                end
+            if is_shallow = True then
+                -- TODO: Add assert that number_of_queries = 0
+                query_punctuation := get_query_punctuation(number_of_queries)
+                l_query.append(query_punctuation + "shallow=true")
+                number_of_queries := number_of_queries + 1
             end
 
             if not auth.is_empty then
@@ -226,10 +223,8 @@ feature {NONE} -- Implementation
                 number_of_queries := number_of_queries + 1
 			end
 
-            if attached priority_get as ll_priority then
-                if ll_priority = True then
-                    l_path.append("/.priority")
-                end
+            if priority_get = True then
+                l_path.append("/.priority")
             end
 
             Result := base_uri + l_path + Firebase_api_json_extension + l_query
@@ -260,19 +255,12 @@ feature -- print format
 		end
 
 
--- feature -- shallow
+feature -- shallow
 
-	-- set_shallow (option: detachable BOOLEAN)
-		-- do
-            -- if option /= Void then
-            --     is_shallow := option
-            -- else
-            --     is_shallow := Void
-            -- end
-        -- ensure
-		-- ensure is_shallow is True if set
-		-- ensure that the other query options are not set (printFormat, auth?)
-	    -- end
+	set_shallow (option: BOOLEAN)
+		do
+            is_shallow := option
+	    end
 
 
 feature -- format
@@ -366,7 +354,7 @@ feature -- priority
 
 
 feature -- rules
-    retrieve_rules () : detachable RESPONSE
+    retrieve_rules () : detachable RESPONSE -- TODO: Find syntax for feature with no parameters.
         local
             l_request: REQUEST
         do
