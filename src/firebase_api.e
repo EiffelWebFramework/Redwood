@@ -327,14 +327,14 @@ feature -- filtering functions
             end
         end
 
-    -- set_limit_to_first_value (value: detachable INTEGER)
-    --     do
-    --         if value /= Void then
-    --             limit_to_first := value.out
-    --         else
-    --             limit_to_first := Void
-    --         end
-    --     end
+    set_limit_to_first_value (value: detachable INTEGER)
+        do
+            if value /= Void then
+                limit_to_first := value.out
+            else
+                limit_to_first := Void
+            end
+        end
 
     -- set_limit_to_last_value (value: detachable INTEGER)
     --     do
@@ -347,9 +347,16 @@ feature -- filtering functions
 
 
 feature -- priority
-    get_priority (value: BOOLEAN)
+    get_priority (a_path: detachable READABLE_STRING_8) : detachable RESPONSE
+        local
+            l_request: REQUEST
         do
-            priority_get := value
+            if attached a_path as ll_path then
+                create l_request.make ("GET", new_uri (a_path + "/.priority"))
+            else
+                create l_request.make ("GET", new_uri ("/.priority"))
+            end
+            Result := l_request.execute
         end
 
 
