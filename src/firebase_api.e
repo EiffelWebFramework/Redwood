@@ -86,7 +86,6 @@ feature -- Access
 			-- Indicates last limit range for queries.
 
 
-
 feature -- REST API
 
     get (a_path: detachable READABLE_STRING_8): detachable RESPONSE
@@ -252,7 +251,7 @@ feature {NONE} -- Implementation
 		end
 
 
-feature -- print format
+feature -- Print Format
 
 	set_print_format (option: detachable READABLE_STRING_8)
 			-- Set data format that is returned from the server.
@@ -267,7 +266,7 @@ feature -- print format
 		end
 
 
-feature -- shallow
+feature -- Shallow
 
 	set_shallow (option: BOOLEAN)
 			-- Returns response values as true. Used to work with large datasets.
@@ -276,7 +275,7 @@ feature -- shallow
 	    end
 
 
-feature -- format
+feature -- Format Response
 
 	set_format_response (option: detachable READABLE_STRING_8)
 			-- Encodes priorities in response.
@@ -289,7 +288,7 @@ feature -- format
 		end
 
 
-feature -- filtering functions
+feature -- Filtering
 
 	set_order_by_type (value: detachable READABLE_STRING_8)
 			-- The order_by value sets how data can be filtered and ordered.
@@ -368,7 +367,7 @@ feature -- filtering functions
 		end
 
 
-feature -- priority
+feature -- Priority
 	get_priority (a_path: detachable READABLE_STRING_8) : detachable RESPONSE
 			-- Reads data priority.
 		local
@@ -383,7 +382,7 @@ feature -- priority
 		end
 
 
-feature -- rules
+feature -- Rules and Security
 	retrieve_rules : detachable RESPONSE
 			-- Reads rules.
 		local
@@ -406,7 +405,7 @@ feature -- rules
 		end
 
 
-feature -- stream TODO: Not functioning yet.
+feature -- Stream TODO: Not functioning yet.
 	stream (a_path: detachable READABLE_STRING_8): detachable RESPONSE
 		local
 			l_request: REQUEST
@@ -417,7 +416,7 @@ feature -- stream TODO: Not functioning yet.
 		end
 
 
-feature -- clear all query settings
+feature -- Clear
 	clear_all_query_settings
 		do
 			print_format := Void
