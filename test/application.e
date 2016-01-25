@@ -27,11 +27,10 @@ feature {NONE} -- Initialization
             create api.make_with_auth("https://fiery-fire-4173.firebaseio.com", "33ZXLlDjqpdLzb6DiAi17KkAA6qvzkF40M3MKxWL")
 
 			-- Test GET
-			api.set_print_format("pretty")
+			-- api.set_print_format("pretty")
             -- api.set_print_format(Void)
 
-            -- api.set_shallow(True)
-            -- print("set shallow to true %N")
+            api.set_shallow(True)
 
             -- api.set_format_response("export")
 
@@ -41,12 +40,12 @@ feature {NONE} -- Initialization
             -- api.set_end_at_value(Void)
             -- api.set_equal_to_value("jim")
 
-            api.set_order_by_type("value")
+            -- api.set_order_by_type("value")
             -- api.set_start_at_value("50")
 
-            api.set_limit_to_first_value(3)
-
-            -- api.clear_query_settings()
+            -- api.set_limit_to_first_value(3)
+            -- api.clear_filtering_values()
+            -- api.clear_all_query_settings()
 
             response := api.get("/scores")
 
