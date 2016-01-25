@@ -67,10 +67,13 @@ feature -- Access
 
     equal_to: detachable READABLE_STRING_8
 
-    limit_to_first: detachable INTEGER
+    limit_to_first: detachable READABLE_STRING_8
 
-    limit_to_last: detachable INTEGER
+    limit_to_last: detachable READABLE_STRING_8
 
+    priority_get: detachable BOOLEAN
+
+    priority: detachable READABLE_STRING_8
 
 feature -- REST API
 
@@ -157,8 +160,8 @@ feature {NONE} -- Implementation
 				l_path.prepend("/")
 			end
 
-			number_of_queries := 0
-			l_query := ""
+            number_of_queries := 0
+            l_query := ""
 			if attached print_format as ll_print then
                 query_punctuation := get_query_punctuation(number_of_queries)
                 l_query.append(query_punctuation + "print=" + ll_print)
@@ -189,11 +192,23 @@ feature {NONE} -- Implementation
                 number_of_queries := number_of_queries + 1
             end
 
-			if not auth.is_empty then
+            if attached equal_to as ll_equal_to then
                 query_punctuation := get_query_punctuation(number_of_queries)
-                l_query.append(query_punctuation + "auth=" + auth )
+                l_query.append(query_punctuation + "equalTo=" + ll_equal_to)
                 number_of_queries := number_of_queries + 1
-			end
+            end
+
+            if attached limit_to_first as ll_limit_to_first then
+                query_punctuation := get_query_punctuation(number_of_queries)
+                l_query.append(query_punctuation + "limitToFirst=" + ll_limit_to_first)
+                number_of_queries := number_of_queries + 1
+            end
+
+            if attached limit_to_last as ll_limit_to_last then
+                query_punctuation := get_query_punctuation(number_of_queries)
+                l_query.append(query_punctuation + "limitToLast=" + ll_limit_to_last)
+                number_of_queries := number_of_queries + 1
+            end
 
 			if attached is_shallow as ll_shallow then
                 -- TODO: Find out why is_shallow is False by default.
@@ -202,6 +217,18 @@ feature {NONE} -- Implementation
                     query_punctuation := get_query_punctuation(number_of_queries)
                     l_query.append(query_punctuation + "shallow=true")
                     number_of_queries := number_of_queries + 1
+                end
+            end
+
+            if not auth.is_empty then
+                query_punctuation := get_query_punctuation(number_of_queries)
+                l_query.append(query_punctuation + "auth=" + auth )
+                number_of_queries := number_of_queries + 1
+			end
+
+            if attached priority_get as ll_priority then
+                if ll_priority = True then
+                    l_path.append("/.priority")
                 end
             end
 
@@ -233,19 +260,19 @@ feature -- print format
 		end
 
 
-feature -- shallow
+-- feature -- shallow
 
-	set_shallow (option: detachable BOOLEAN)
-		do
-            if option /= Void then
-                is_shallow := option
+	-- set_shallow (option: detachable BOOLEAN)
+		-- do
+            -- if option /= Void then
+            --     is_shallow := option
             -- else
             --     is_shallow := Void
-            end
+            -- end
         -- ensure
 		-- ensure is_shallow is True if set
 		-- ensure that the other query options are not set (printFormat, auth?)
-	    end
+	    -- end
 
 
 feature -- format
@@ -301,17 +328,40 @@ feature -- filtering functions
 
     set_equal_to_value (value: detachable READABLE_STRING_8)
         do
-            equal_to := value
+            if value /= Void then
+                if value.is_integer = TRUE then
+                    equal_to := value
+                else
+                    equal_to := "%"" + value + "%""
+                end
+            else
+                equal_to := Void
+            end
         end
 
-    set_limit_to_first_value (value: detachable INTEGER)
-        do
-            limit_to_first := value
-        end
+    -- set_limit_to_first_value (value: detachable INTEGER)
+    --     do
+    --         if value /= Void then
+    --             limit_to_first := value.out
+    --         else
+    --             limit_to_first := Void
+    --         end
+    --     end
 
-    set_limit_to_last_value (value: detachable INTEGER)
+    -- set_limit_to_last_value (value: detachable INTEGER)
+    --     do
+    --         if value /= Void then
+    --             limit_to_last := value.out
+    --         else
+    --             limit_to_last := Void
+    --         end
+    --     end
+
+
+feature -- priorities
+    get_priority (value: BOOLEAN)
         do
-            limit_to_last := value
+            priority_get := value
         end
 
 

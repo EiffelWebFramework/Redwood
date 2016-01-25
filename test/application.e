@@ -26,12 +26,12 @@ feature {NONE} -- Initialization
 			-- deleteResponse: detachable RESPONSE
         do
 			-- Create API
-    		-- create api.make_with_auth("https://fiery-fire-4173.firebaseio.com", "33ZXLlDjqpdLzb6DiAi17KkAA6qvzkF40M3MKxWL")
 			-- create api.make("https://samplechat.firebaseio-demo.com")
-            create api.make("https://fiery-fire-4173.firebaseio.com")
+            -- create api.make("https://fiery-fire-4173.firebaseio.com")
+            create api.make_with_auth("https://fiery-fire-4173.firebaseio.com", "33ZXLlDjqpdLzb6DiAi17KkAA6qvzkF40M3MKxWL")
 
 			-- Test GET
-			api.set_print_format("pretty")
+			-- api.set_print_format("pretty")
             -- api.set_print_format(Void)
 
             -- api.set_shallow(True)
@@ -41,39 +41,42 @@ feature {NONE} -- Initialization
 
             -- api.set_format_response("export")
 
-            api.set_order_by_type("key")
-            api.set_start_at_value("d")
-            api.set_end_at_value("i")
-            api.set_end_at_value(Void)
+            -- api.set_order_by_type("priority")
+            -- api.set_start_at_value("d")
+            -- api.set_end_at_value("i")
+            -- api.set_end_at_value(Void)
+            -- api.set_equal_to_value("jim")
 
             -- api.set_order_by_type("value")
             -- api.set_start_at_value("50")
 
-		    getResponse := api.get("/scores")
+            -- api.set_limit_to_first_value(3)
+            -- api.get_priority(False)
+            getResponse := api.get("/scores/Duo")
 			if getResponse /= Void then
-				print(getResponse.body)
+			   print(getResponse.body)
 			end
 
 			-- TEST PUT
-			-- value := "{%".indexOn%": %".value%"}"
-			-- putResponse := api.put("/scores", value)
+			-- value := "{%".sv%": %"timestamp%"}"
+            -- value := "{%".value%": 2, %".priority%": 6.0}"
+			-- putResponse := api.put("/scores/Duo", value)
 			-- if putResponse /= Void then
-            --     print(putResponse.body)
+            --    print(putResponse.body)
 			-- end
 
 			-- TEST POST
-			-- value := "{%"keyC%": %"valueC%"}"
-			-- postResponse := api.post("keyC", value)
+		    -- value := "{%"Zoe%": 2}"
+			--  postResponse := api.post("/scores", value)
 			-- if postResponse /= Void then
 			--    print(postResponse.body)
 			-- end
 
-
 			-- TEST PATCH
-			-- value := "{%"keyD%": %"valueD%"}"
-			-- patchResponse := api.patch("keyD", value)
+			-- value := "{%"Zoe%": 2}"
+			-- patchResponse := api.patch("/scores", value)
 			-- if patchResponse /= Void then
-			--    print(patchResponse.body)
+		    --    print(patchResponse.body)
 			-- end
 
 			-- TEST DELETE
