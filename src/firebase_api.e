@@ -51,30 +51,40 @@ feature -- Access
 	query_count: INTEGER
 			-- Number of queries in uri.
 
+	priority_uri_path: STRING_8 = "/.priority"
+			-- Uri path for viewing priority.
+
+	security_uri_path: STRING_8 = ".settings/rules"
+			-- Uri path for viewing and updating security and rules.
+
 	print_format: detachable READABLE_STRING_8
 			-- Formats the data returned in the response from the server.
 			-- Value is either "pretty", "silent" or Void.
 
 	is_shallow: BOOLEAN
 			-- Limits the depth of the response.
-			-- Shallow cannot be mixed with other parameters.
 
 	format_response: detachable READABLE_STRING_8
 			-- Server will encode priorities in response, if format is set to export.
 
 	order_by: detachable READABLE_STRING_8
+			-- Indicates how data is ordered and filtered.
 
 	start_at: detachable READABLE_STRING_8
+			-- Indicates start point for queries.
 
 	end_at: detachable READABLE_STRING_8
+			-- Indicates end point for queries.
 
 	equal_to: detachable READABLE_STRING_8
+			-- Indicates equality value for queries.
 
 	limit_to_first: detachable READABLE_STRING_8
+			-- Indicates first limit range for queries.
 
 	limit_to_last: detachable READABLE_STRING_8
+			-- Indicates last limit range for queries.
 
-	priority: detachable READABLE_STRING_8
 
 
 feature -- REST API
@@ -150,7 +160,7 @@ feature {NONE} -- Implementation
 		local
 			l_path: STRING_32
 			l_query: STRING_32
-			query_punctuation: STRING   -- TODO: Find correct type to use.
+			query_punctuation: STRING_8
 		do
 			if attached a_path as ll_path then
 				l_path := ll_path
@@ -228,11 +238,11 @@ feature {NONE} -- Implementation
 			print ("%NResult: " + Result + "%N")
 		ensure
 			valid_query_count: query_count >= 0
+			-- Shallow cannot be mixed with other parameters.
 			is_shallow_valid: is_shallow = True implies (query_count = 1) or (query_count = 2 and not auth.is_empty)
 		end
 
-	get_query_punctuation (number_of_queries: INTEGER): STRING
-        	-- TODO: Find correct return type.
+	get_query_punctuation (number_of_queries: INTEGER): STRING_8
 		do
 			if number_of_queries = 0 then
 				Result := "?"
@@ -281,71 +291,71 @@ feature -- format
 
 feature -- filtering functions
 
-    set_order_by_type (value: detachable READABLE_STRING_8)
+	set_order_by_type (value: detachable READABLE_STRING_8)
 			-- The order_by value sets how data can be filtered and ordered.
-        do
-            if value /= Void then
-                order_by := "%"$" + value + "%""
-            else
-                order_by := Void
-            end
-        ensure
-            valid_value: attached value as l_value and then (l_value.same_string ("key") or l_value.same_string ("value") or l_value.same_string ("priority"))
-        end
+		do
+			if value /= Void then
+				order_by := "%"$" + value + "%""
+			else
+				order_by := Void
+			end
+		ensure
+			valid_value: attached value as l_value and then (l_value.same_string ("key") or l_value.same_string ("value") or l_value.same_string ("priority"))
+		end
 
-    set_start_at_value (value: detachable READABLE_STRING_8)
+	set_start_at_value (value: detachable READABLE_STRING_8)
 			-- Sets start point for queries.
-        do
-            if value /= Void then
-                if value.is_integer = TRUE then
-                    start_at := value
-                else
-                    start_at := "%"" + value + "%""
-                end
-            else
-                start_at := Void
-            end
-        end
+		do
+			if value /= Void then
+				if value.is_integer = TRUE then
+					start_at := value
+				else
+					start_at := "%"" + value + "%""
+				end
+			else
+				start_at := Void
+			end
+		end
 
-    set_end_at_value (value: detachable READABLE_STRING_8)
+	set_end_at_value (value: detachable READABLE_STRING_8)
 			-- Sets end point for queries.
-        do
-            if value /= Void then
-                if value.is_integer = TRUE then
-                    end_at := value
-                else
-                    end_at := "%"" + value + "%""
-                end
-            else
-                end_at := Void
-            end
-        end
+		do
+			if value /= Void then
+				if value.is_integer = TRUE then
+					end_at := value
+				else
+					end_at := "%"" + value + "%""
+				end
+			else
+				end_at := Void
+			end
+		end
 
-    set_equal_to_value (value: detachable READABLE_STRING_8)
+	set_equal_to_value (value: detachable READABLE_STRING_8)
 			-- Sets equality value for queries.
-        do
-            if value /= Void then
-                if value.is_integer = TRUE then
-                    equal_to := value
-                else
-                    equal_to := "%"" + value + "%""
-                end
-            else
-                equal_to := Void
-            end
-        end
+		do
+			if value /= Void then
+				if value.is_integer = TRUE then
+					equal_to := value
+				else
+					equal_to := "%"" + value + "%""
+				end
+			else
+				equal_to := Void
+			end
+		end
 
-    set_limit_to_first_value (value: INTEGER)
+	set_limit_to_first_value (value: INTEGER)
 			-- Sets first limit range for queries.
-        do
-            limit_to_first := value.out
-        end
+		do
+			limit_to_first := value.out
+		end
 
 	set_limit_to_last_value (value: INTEGER)
 			-- Sets last limit range for queries.
-        do
-            limit_to_last := value.out
-        end
+		do
+			limit_to_last := value.out
+		end
 
 	clear_filtering_values
 		do
@@ -359,41 +369,42 @@ feature -- filtering functions
 
 
 feature -- priority
-    get_priority (a_path: detachable READABLE_STRING_8) : detachable RESPONSE
-		-- Reads data priority.
-        local
-            l_request: REQUEST
-        do
-            if attached a_path as ll_path then
-                create l_request.make ("GET", new_uri (a_path + "/.priority"))
-            else
-                create l_request.make ("GET", new_uri ("/.priority"))
-            end
-            Result := l_request.execute
-        end
+	get_priority (a_path: detachable READABLE_STRING_8) : detachable RESPONSE
+			-- Reads data priority.
+		local
+			l_request: REQUEST
+		do
+			if attached a_path as ll_path then
+				create l_request.make ("GET", new_uri (a_path + priority_uri_path))
+			else
+				create l_request.make ("GET", new_uri (priority_uri_path))
+			end
+			Result := l_request.execute
+		end
 
 
 feature -- rules
-    retrieve_rules : detachable RESPONSE
+	retrieve_rules : detachable RESPONSE
 			-- Reads rules.
-        local
-            l_request: REQUEST
-        do
-            create l_request.make ("GET", new_uri (".settings/rules"))
-            Result := l_request.execute
-        end
+		local
+			l_request: REQUEST
+		do
+			create l_request.make ("GET", new_uri (security_uri_path))
+			Result := l_request.execute
+		end
 
-    update_rules (a_value: READABLE_STRING_8): detachable RESPONSE
+	update_rules (a_value: READABLE_STRING_8): detachable RESPONSE
 			-- Updates rules.
-        require
-            is_json_value: is_valid_json (a_value)
-        local
-            l_request: REQUEST
-        do
-            create l_request.make ("PUT", new_uri (".settings/rules"))
-            l_request.add_payload (a_value)
-            Result := l_request.execute
-        end
+		require
+			is_json_value: is_valid_json (a_value)
+		local
+			l_request: REQUEST
+		do
+			create l_request.make ("PUT", new_uri (security_uri_path))
+			l_request.add_payload (a_value)
+			Result := l_request.execute
+		end
+
 
 feature -- stream TODO: Not functioning yet.
 	stream (a_path: detachable READABLE_STRING_8): detachable RESPONSE
@@ -407,19 +418,18 @@ feature -- stream TODO: Not functioning yet.
 
 
 feature -- clear all query settings
-    clear_all_query_settings
-        do
-            print_format := Void
-            is_shallow := False
-            format_response := Void
-            order_by := Void
-            start_at := Void
-            end_at := Void
-            equal_to := Void
-            limit_to_first := Void
-            limit_to_last := Void
-            priority := Void
-        end
+	clear_all_query_settings
+		do
+			print_format := Void
+			is_shallow := False
+			format_response := Void
+			order_by := Void
+			start_at := Void
+			end_at := Void
+			equal_to := Void
+			limit_to_first := Void
+			limit_to_last := Void
+		end
 
 
 note
