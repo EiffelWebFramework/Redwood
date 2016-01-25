@@ -71,8 +71,6 @@ feature -- Access
 
     limit_to_last: detachable READABLE_STRING_8
 
-    priority_get: detachable BOOLEAN
-
     priority: detachable READABLE_STRING_8
 
 feature -- REST API
@@ -222,10 +220,6 @@ feature {NONE} -- Implementation
                 l_query.append(query_punctuation + "auth=" + auth )
                 number_of_queries := number_of_queries + 1
 			end
-
-            if priority_get = True then
-                l_path.append("/.priority")
-            end
 
             Result := base_uri + l_path + Firebase_api_json_extension + l_query
             print("%NResult: " + Result + "%N")
@@ -379,6 +373,23 @@ feature -- rules
             l_request.add_payload (a_value)
             Result := l_request.execute
         end
+
+
+feature -- clear query settings
+    clear_query_settings ()
+        do
+            print_format := Void
+            is_shallow := False
+            format_response := Void
+            order_by := Void
+            start_at := Void
+            end_at := Void
+            equal_to := Void
+            limit_to_first := Void
+            limit_to_last := Void
+            priority := Void
+        end
+
 
 note
 	copyright: "2011-2015 Javier Velilla, Jocelyn Fiat, Eiffel Software and others"

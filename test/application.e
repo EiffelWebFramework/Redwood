@@ -27,16 +27,16 @@ feature {NONE} -- Initialization
             create api.make_with_auth("https://fiery-fire-4173.firebaseio.com", "33ZXLlDjqpdLzb6DiAi17KkAA6qvzkF40M3MKxWL")
 
 			-- Test GET
-			-- api.set_print_format("pretty")
+			api.set_print_format("pretty")
             -- api.set_print_format(Void)
 
-            -- api.set_shallow(True)
+            --api.set_shallow(True)
             -- print("set shallow to true %N")
 
-            -- api.set_format_response("export")
+            api.set_format_response("export")
 
-            -- api.set_order_by_type("key")
-            -- api.set_start_at_value("d")
+            api.set_order_by_type("key")
+            api.set_start_at_value("d")
             -- api.set_end_at_value("i")
             -- api.set_end_at_value(Void)
             -- api.set_equal_to_value("jim")
@@ -45,8 +45,10 @@ feature {NONE} -- Initialization
             -- api.set_start_at_value("50")
 
             -- api.set_limit_to_first_value(3)
-            -- api.get_priority(False)
-            -- response := api.get("/scores")
+
+            api.clear_query_settings()
+
+            response := api.get("/scores")
 
 			-- TEST PUT
 			-- value := "{%".sv%": %"timestamp%"}"
@@ -65,7 +67,7 @@ feature {NONE} -- Initialization
 			-- response := api.delete("keyB")
 
             -- TEST GET_PRIORITIES
-            response := api.get_priority("/scores/Haribo")
+            -- response := api.get_priority("/scores/Haribo")
 
             -- TEST RETRIEVE_RULES
             -- response := api.retrieve_rules()
