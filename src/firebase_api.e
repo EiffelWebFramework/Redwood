@@ -321,23 +321,25 @@ feature -- filtering functions
             end
         end
 
-    set_limit_to_first_value (value: detachable INTEGER)
+    set_limit_to_first_value (value: INTEGER)
         do
-            if value /= Void then
-                limit_to_first := value.out
-            else
-                limit_to_first := Void
-            end
+            limit_to_first := value.out
         end
 
-    -- set_limit_to_last_value (value: detachable INTEGER)
-    --     do
-    --         if value /= Void then
-    --             limit_to_last := value.out
-    --         else
-    --             limit_to_last := Void
-    --         end
-    --     end
+	set_limit_to_last_value (value: INTEGER)
+        do
+            limit_to_last := value.out
+        end
+
+	clear_filtering_values ()
+		do
+			order_by := Void
+			start_at := Void
+			end_at := Void
+			equal_to := Void
+			limit_to_first := Void
+			limit_to_last := Void
+		end
 
 
 feature -- priority
@@ -373,6 +375,16 @@ feature -- rules
             l_request.add_payload (a_value)
             Result := l_request.execute
         end
+
+feature -- stream
+	stream (a_path: detachable READABLE_STRING_8): detachable RESPONSE
+		local
+			l_request: REQUEST
+		do
+			create l_request.make ("GET", new_uri (a_path))
+			l_request.add_header(l_request.accept_type_header_name, l_request.default_accept_type)
+			Result := l_request.execute
+		end
 
 
 feature -- clear query settings

@@ -30,23 +30,23 @@ feature {NONE} -- Initialization
 			api.set_print_format("pretty")
             -- api.set_print_format(Void)
 
-            --api.set_shallow(True)
+            -- api.set_shallow(True)
             -- print("set shallow to true %N")
 
-            api.set_format_response("export")
+            -- api.set_format_response("export")
 
-            api.set_order_by_type("key")
-            api.set_start_at_value("d")
+            -- api.set_order_by_type("key")
+            -- api.set_start_at_value("d")
             -- api.set_end_at_value("i")
             -- api.set_end_at_value(Void)
             -- api.set_equal_to_value("jim")
 
-            -- api.set_order_by_type("value")
+            api.set_order_by_type("value")
             -- api.set_start_at_value("50")
 
-            -- api.set_limit_to_first_value(3)
+            api.set_limit_to_first_value(3)
 
-            api.clear_query_settings()
+            -- api.clear_query_settings()
 
             response := api.get("/scores")
 
@@ -75,6 +75,9 @@ feature {NONE} -- Initialization
             -- TEST UPDATE_RULES
             -- value := "{%"rules%": {%".read%": true}}"
             -- response := api.update_rules(value)
+
+            -- TEST STREAM
+            -- response := api.stream("/cool")
 
             if response /= Void then
                 print (response.body)
