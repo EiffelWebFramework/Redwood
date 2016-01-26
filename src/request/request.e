@@ -49,7 +49,7 @@ feature -- Status Report
 		end
 
 	sanitized_url: STRING_8
-			-- Returns the URL without the query string part.	
+			-- Returns the URL without the query string part.
 		local
 			l_uri: URI
 		do
@@ -93,6 +93,13 @@ feature -- Constants
 			-- content type.
 		once
 			Result := application_json
+		end
+
+	accept_type_header_name: STRING_8 = "Accept";
+
+	default_accept_type: STRING_8
+		once
+			Result := "text/event-stream"
 		end
 
 feature -- Access
