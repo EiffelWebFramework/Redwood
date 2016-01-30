@@ -231,7 +231,6 @@ feature {NONE} -- Implementation
 				query_count := query_count + 1
 			end
 			Result := base_uri + l_path + Firebase_api_json_extension + l_query
-			print ("%NResult: " + Result + "%N")
 		ensure
 			valid_query_count: query_count >= 0
 				-- Shallow cannot be mixed with other parameters.
