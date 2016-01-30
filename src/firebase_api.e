@@ -8,10 +8,7 @@ class
 	FIREBASE_API
 
 inherit
-
 	SHARED_EJSON
-
-
 	REFACTORING_HELPER
 
 create
@@ -64,7 +61,7 @@ feature -- Access
 			-- Value is either "pretty", "silent" or Void.
 
 	is_shallow: BOOLEAN
-			-- Limits the depth of the response.
+			-- Limits the depth of the response if set to true.
 
 	format_response: detachable READABLE_STRING_8
 			-- Server will encode priorities in response, if format is set to export.
@@ -86,6 +83,9 @@ feature -- Access
 
 	limit_to_last: detachable READABLE_STRING_8
 			-- Indicates last limit range for queries.
+
+	download_filename: detachable READABLE_STRING_8
+			-- Name of the download file.
 
 feature -- REST API
 
@@ -220,6 +220,11 @@ feature {NONE} -- Implementation
 				l_query.append (query_punctuation + "shallow=true")
 				query_count := query_count + 1
 			end
+			if attached download_filename as ll_download_filename then
+				query_punctuation := get_query_punctuation (query_count)
+				l_query.append (query_punctuation + "download=" + ll_download_filename)
+				query_count := query_count + 1
+			end
 			if not auth.is_empty then
 				query_punctuation := get_query_punctuation (query_count)
 				l_query.append (query_punctuation + "auth=" + auth)
@@ -273,7 +278,7 @@ feature -- Format Response
 				format_response := option
 			end
 		ensure
-			valid_option: attached option as l_format and then l_format.same_string ("export")
+			valid_option: attached option as l_option and then l_option.same_string ("export")
 		end
 
 feature -- Filtering
@@ -354,45 +359,45 @@ feature -- Filtering
 			limit_to_last := Void
 		end
 
+
+feature -- Download
+
+	download (a_path: detachable READABLE_STRING_8; filename: detachable READABLE_STRING_8): detachable RESPONSE
+			-- Triggers a file download of the data.
+		do
+			if attached filename as ll_filename then
+				download_filename := ll_filename + ".txt"
+			else
+				download_filename := "file.txt"
+			end
+			Result := get (a_path)
+			download_filename := Void
+		end
+
 feature -- Priority
 
 	get_priority (a_path: detachable READABLE_STRING_8): detachable RESPONSE
 			-- Reads data priority.
-		local
-			l_request: REQUEST
 		do
-			fixme ("Use get")
 			if attached a_path as ll_path then
-				create l_request.make ("GET", new_uri (a_path + priority_uri_path))
+				Result := get (ll_path + priority_uri_path)
 			else
-				create l_request.make ("GET", new_uri (priority_uri_path))
+				Result := get (priority_uri_path)
 			end
-			Result := l_request.execute
 		end
 
 feature -- Rules and Security
 
 	retrieve_rules: detachable RESPONSE
 			-- Reads rules.
-		local
-			l_request: REQUEST
 		do
-			fixme ("Use get feature!!!")
-			create l_request.make ("GET", new_uri (security_uri_path))
-			Result := l_request.execute
+			Result := get (security_uri_path)
 		end
 
 	update_rules (a_value: READABLE_STRING_8): detachable RESPONSE
 			-- Updates rules.
-		require
-			is_json_value: is_valid_json (a_value)
-		local
-			l_request: REQUEST
 		do
-			fixme ("Use put feature!!!")
-			create l_request.make ("PUT", new_uri (security_uri_path))
-			l_request.add_payload (a_value)
-			Result := l_request.execute
+			Result := put (security_uri_path, a_value)
 		end
 
 feature -- Stream
