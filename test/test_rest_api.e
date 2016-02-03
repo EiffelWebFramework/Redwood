@@ -11,12 +11,18 @@ class
 	TEST_REST_API
 
 inherit
-	ARGUMENTS
-	-- EQA_TEST_SET
+	EQA_TEST_SET
 
-create make
+redefine
+	on_prepare
+
+end
 
 feature {NONE} -- Initialization
+	on_prepare
+		do
+			make ("https://fiery-fire-4173.firebaseio.com", Void)
+		end
 
 	make (a_base_uri: READABLE_STRING_8; a_auth: detachable READABLE_STRING_8)
 		do
@@ -42,23 +48,38 @@ feature -- Access
 
 feature -- Test routines
 
-	test_get (a_path: detachable READABLE_STRING_8): detachable RESPONSE
+	test_get (a_path: detachable READABLE_STRING_8; expected_value: READABLE_STRING_8): detachable RESPONSE
 			-- Test GET
+		local
+			value: READABLE_STRING_8
 		do
-			print ("Testing GET%N")
+			-- GET item from the database.
 			Result := api.get (a_path)
-			print (Result)
-			-- assert (Result.status = 400)
-			print ("%N")
+
+			-- Ensures the GET response is the same as the expected value.
+			value := "%"" + expected_value + "%""
+			if Result /= Void then
+				print (Result.body)
+				print ("%N")
+				print (value)
+				assert ("Checking GET response.", Result.body = value)
+			end
 		end
 
 	test_put (a_path: detachable READABLE_STRING_8; a_value: READABLE_STRING_8): detachable RESPONSE
 			-- Test PUT
+		local
+			value: READABLE_STRING_8
 		do
-			print ("Testing PUT%N")
+			-- PUT item into the database.
 			Result := api.put (a_path, a_value)
-			print (Result)
-			print ("%N")
+
+			-- Checks that the correct item is in the database.
+			value := "%"" + a_value + "%""
+			Result := api.get (a_path)
+			if Result /= Void then
+				assert ("GET = Put a_value", Result.body = a_value)
+			end
 		end
 
 	test_post (a_path: detachable READABLE_STRING_8; a_value: READABLE_STRING_8): detachable RESPONSE
@@ -72,7 +93,15 @@ feature -- Test routines
 
 	test_patch (a_path: detachable READABLE_STRING_8; a_value: READABLE_STRING_8): detachable RESPONSE
 			-- TEST PATCH
+		local
+			value: READABLE_STRING_8
 		do
+			-- Patch item.
+			Result := api.patch(a_path, a_value)
+			value := "%"" + a_value "%""
+			if Result /= Void then
+				assert ("GET value = a_value", api.get (a_path, a_value) = value)
+			end
 			print ("Testing PATCH%N")
 			Result := api.patch (a_path, a_value)
 			print (Result)
@@ -82,8 +111,34 @@ feature -- Test routines
 	test_delete (a_path: detachable READABLE_STRING_8): detachable RESPONSE
 			-- TEST DELETE
 		do
-			print ("Testing DELETE%N")
+			-- Ensures that the path exists.
+			Result := api.get (a_path)
+			if Result /= Void then
+				print (Result.body)
+				print ("%N")
+				print (value)
+				assert ("Checking GET response.", Result.body = value)
+			end
+
+			-- Ensures that the delete is successful, through status response.
 			Result := api.delete (a_path)
-			print (Result)
+			if Result /= Void then
+				print (Result.body)
+				print ("%N")
+				print (value)
+				assert ("Checking GET response.", Result.body = value)
+			end
+
+			-- Ensures that the delete is successful, through a failed GET.
+			Result := api.delete (a_path)
+			if Result /= Void then
+				print (Result.body)
+				print ("%N")
+				print (value)
+				assert ("Checking GET response.", Result.body = value)
+			end
+
+			Result := api.get (a_path)
 			print ("%N")
 		end
+end

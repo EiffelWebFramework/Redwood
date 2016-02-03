@@ -163,16 +163,12 @@ feature {NONE} -- Implementation
 			if attached a_path as ll_path then
 				l_path := ll_path
 			else
-				l_path := ""
+				l_path := "/"
+			end
+			if not l_path.is_empty and then not (l_path.starts_with ("/") or l_path.starts_with ("\")) then
+				l_path.prepend ("/")
 			end
 
-			if not l_path.is_empty and then not (l_path.starts_with ("/") or l_path.starts_with ("\")) then
-				l_path.prepend ("/")
-			end
-			Result := base_uri + l_path + Firebase_api_json_extension
-			if not l_path.is_empty and then not (l_path.starts_with ("/") or l_path.starts_with ("\")) then
-				l_path.prepend ("/")
-			end
 			l_query := ""
 			query_count := 0
 			if attached print_format as ll_print then
@@ -231,6 +227,8 @@ feature {NONE} -- Implementation
 				query_count := query_count + 1
 			end
 			Result := base_uri + l_path + Firebase_api_json_extension + l_query
+			print (Result)
+			print ("%N")
 		ensure
 			valid_query_count: query_count >= 0
 				-- Shallow cannot be mixed with other parameters.
@@ -407,7 +405,7 @@ feature -- Stream
 			fixme ("TODO: Not functioning yet.")
 			-- https://www.firebase.com/blog/2014-03-24-streaming-for-firebase-rest-api.html
 			create l_request.make ("GET", new_uri (a_path))
-			l_request.add_header (l_request.accept_type_header_name, l_request.default_accept_type)
+			-- l_request.add_header (l_request.accept_type_header_name, l_request.default_accept_type)
 			Result := l_request.execute
 		end
 
