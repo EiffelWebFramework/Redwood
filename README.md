@@ -439,7 +439,7 @@ I executed the following commands in application.e.
 
 This was the results from application.e. (https://drive.google.com/file/d/0B8gBdFqk27a8VFQ4RkhGcnlfdmc/view?usp=sharing)
 
-Afterwards, I executed the equivalent comments in a shell script.
+Afterwards, I executed the equivalent comments in a shell script test.sh.
 
     curl -X DELETE "https://samplechat.firebaseio-demo.com/.json"
     curl -X PUT -d '{"keyA": "valueA"}' "https://samplechat.firebaseio-demo.com/.json"
@@ -447,7 +447,7 @@ Afterwards, I executed the equivalent comments in a shell script.
 
 This was the result from the shell script.(https://drive.google.com/file/d/0B8gBdFqk27a8cHJIZzRrcTBVNjA/view?usp=sharing)
 
-The result from the shell script was the result that I expected from executing application.e. It is still unclear why an equivalent set of commands has led to 2 different sets of results. This issue has led to assertion failures and has hindered me from completely validating the tests in the test_rest_api.e file. I have created tests for GET, PUT and DELETE. Once this is resolved, tests should be also created for POST and PATCH.
+The result from the shell script was the result that I had expected from executing application.e. From evaluation, I believe that the application class did not provide the expected results due to asynchronous issues. This issue has led to assertion failures and has hindered me from completely validating the tests in the test_rest_api.e file. I have created tests for GET, PUT and DELETE. Once this is resolved, tests should be also created for POST and PATCH.
 
 Tests can also be created to check if URIs with various query strings provide a correct result. However, many of the queries (print format, shallow, export, download) are easily examined by execution and visual inspection.
 
