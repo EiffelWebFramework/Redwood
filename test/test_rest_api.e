@@ -21,7 +21,7 @@ end
 feature {NONE} -- Initialization
 	on_prepare
 		do
-			make ("https://fiery-fire-4173.firebaseio.com", Void)
+			make ("https://samplechat.firebaseio-demo.com", Void)
 		end
 
 	make (a_base_uri: READABLE_STRING_8; a_auth: detachable READABLE_STRING_8)
@@ -52,93 +52,76 @@ feature -- Test routines
 			-- Test GET
 		local
 			value: READABLE_STRING_8
+			body: READABLE_STRING_8
 		do
 			-- GET item from the database.
 			Result := api.get (a_path)
 
-			-- Ensures the GET response is the same as the expected value.
+			-- Ensures the response value is the same as the expected value.
 			value := "%"" + expected_value + "%""
 			if Result /= Void then
-				print (Result.body)
-				print ("%N")
-				print (value)
-				assert ("Checking GET response.", Result.body = value)
+				if attached Result.body as ll_body then
+					body := ll_body
+				else
+					body := ""
+				end
+				assert ("Checking GET response.", body.same_string (value))
 			end
 		end
 
-	test_put (a_path: detachable READABLE_STRING_8; a_value: READABLE_STRING_8): detachable RESPONSE
+	test_put (a_path: detachable READABLE_STRING_8; a_value: READABLE_STRING_8; expected_value: READABLE_STRING_8; path_to_check: detachable READABLE_STRING_8): detachable RESPONSE
 			-- Test PUT
 		local
 			value: READABLE_STRING_8
+			body: READABLE_STRING_8
 		do
 			-- PUT item into the database.
 			Result := api.put (a_path, a_value)
 
 			-- Checks that the correct item is in the database.
-			value := "%"" + a_value + "%""
-			Result := api.get (a_path)
+			value := "%"" + expected_value + "%""
+			Result := api.get (path_to_check)
 			if Result /= Void then
-				assert ("GET = Put a_value", Result.body = a_value)
+				if attached Result.body as ll_body then
+					body := ll_body
+				else
+					body := ""
+				end
+				assert ("Checking PUT response.", body.same_string (value))
 			end
-		end
-
-	test_post (a_path: detachable READABLE_STRING_8; a_value: READABLE_STRING_8): detachable RESPONSE
-			-- Test POST
-		do
-			print ("Testing POST%N")
-			Result := api.post (a_path, a_value)
-			print (Result)
-			print ("%N")
-		end
-
-	test_patch (a_path: detachable READABLE_STRING_8; a_value: READABLE_STRING_8): detachable RESPONSE
-			-- TEST PATCH
-		local
-			value: READABLE_STRING_8
-		do
-			-- Patch item.
-			Result := api.patch(a_path, a_value)
-			value := "%"" + a_value "%""
-			if Result /= Void then
-				assert ("GET value = a_value", api.get (a_path, a_value) = value)
-			end
-			print ("Testing PATCH%N")
-			Result := api.patch (a_path, a_value)
-			print (Result)
-			print ("%N")
 		end
 
 	test_delete (a_path: detachable READABLE_STRING_8): detachable RESPONSE
 			-- TEST DELETE
+		local
+			body: READABLE_STRING_8
 		do
-			-- Ensures that the path exists.
+			-- Ensures that the path originally exists.
 			Result := api.get (a_path)
 			if Result /= Void then
-				print (Result.body)
-				print ("%N")
-				print (value)
-				assert ("Checking GET response.", Result.body = value)
+				if attached Result.body as ll_body then
+					body := ll_body
+				else
+					body := ""
+				end
+				assert ("Checking path exists.", not body.same_string ("null"))
 			end
 
 			-- Ensures that the delete is successful, through status response.
 			Result := api.delete (a_path)
 			if Result /= Void then
-				print (Result.body)
-				print ("%N")
-				print (value)
-				assert ("Checking GET response.", Result.body = value)
+				assert ("Checking delete is successful.", Result.status = 200)
 			end
 
-			-- Ensures that the delete is successful, through a failed GET.
-			Result := api.delete (a_path)
-			if Result /= Void then
-				print (Result.body)
-				print ("%N")
-				print (value)
-				assert ("Checking GET response.", Result.body = value)
-			end
-
+			-- Ensures that the delete is successful, through a GET that returns null.
 			Result := api.get (a_path)
-			print ("%N")
+			if Result /= Void then
+				if attached Result.body as ll_body then
+					body := ll_body
+				else
+					body := ""
+				end
+				assert ("Checking GET response.", body.same_string ("null"))
+			end
 		end
 end

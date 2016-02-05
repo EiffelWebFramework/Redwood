@@ -17,7 +17,6 @@ feature {NONE} -- Initialization
     make
 		local
 			api: FIREBASE_API
-			value: READABLE_STRING_8
 			response: detachable RESPONSE
 			test: TEST_REST_API
         do
@@ -25,25 +24,21 @@ feature {NONE} -- Initialization
 			create api.make ("https://samplechat.firebaseio-demo.com")
 
 			-- Testing GET
-			-- Putting objects into the database and then testing.
-			- Tests currently work with atomic values only.
-			response := api.put ("", "{%"keyA%", %"valueA%"}")
+			-- Clearing database, putting objects into the database and then testing.
+			response := api.delete(Void)
+			response := api.put (Void, "{%"keyA%": %"valueA%"}")
 			response := test.test_get ("/keyA", "valueA")
 
 			-- Testing PUT
-			response := test.test_put ("", "{%"keyB%", %"valueB%"}")
-
-			-- Testing POST
-
-			-- Testing PATCH
-			response := api.put ("", "{%"keyC%", %"valueC%"}")
-			response := test.test_patch ("/keyC", "valueCA")
+			-- Clearing database and then testing.
+			-- response := api.delete(Void)
+			-- response := test.test_put (Void, "{%"keyA%": %"valueA%"}", "valueA", "/keyA")
 
 			-- Testing DELETE
-			-- Putting objects into the database and then testing.
-			response := api.put ("", "{%"keyD%", %"valueD%"}")
-			response := api.test_delete ("/keyD")
-
+			-- Clearing database, putting objects into the database and then deleting.
+			-- response := api.delete(Void)
+			-- response := api.put (Void, "{%"keyA%": %"valueA%"}")
+			-- response := test.test_delete ("/keyA")
         end
 
 end

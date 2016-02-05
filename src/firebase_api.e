@@ -154,7 +154,7 @@ feature -- Query
 feature {NONE} -- Implementation
 
 	new_uri (a_path: detachable READABLE_STRING_8): STRING_32
-			-- Builds uri
+			-- Builds uri.
 		local
 			l_path: STRING_32
 			l_query: STRING_32
@@ -163,8 +163,12 @@ feature {NONE} -- Implementation
 			if attached a_path as ll_path then
 				l_path := ll_path
 			else
+				l_path := ""
+			end
+			if l_path.same_string("") then
 				l_path := "/"
 			end
+
 			if not l_path.is_empty and then not (l_path.starts_with ("/") or l_path.starts_with ("\")) then
 				l_path.prepend ("/")
 			end
@@ -228,14 +232,12 @@ feature {NONE} -- Implementation
 			end
 			Result := base_uri + l_path + Firebase_api_json_extension + l_query
 			print (Result)
-			print ("%N")
 		ensure
 			valid_query_count: query_count >= 0
-				-- Shallow cannot be mixed with other parameters.
-			is_shallow_valid: is_shallow = True implies (query_count = 1) or (query_count = 2 and not auth.is_empty)
 		end
 
 	get_query_punctuation (number_of_queries: INTEGER): STRING_8
+			-- Returns the appropriate punctuation to the URI builder, based on the number of queries that have been already added to the URI string.
 		do
 			if number_of_queries = 0 then
 				Result := "?"
@@ -402,16 +404,16 @@ feature -- Stream
 		local
 			l_request: REQUEST
 		do
-			fixme ("TODO: Not functioning yet.")
-			-- https://www.firebase.com/blog/2014-03-24-streaming-for-firebase-rest-api.html
+			fixme ("TODO: Need to implement two threads for receiving notifications and sending data.")
 			create l_request.make ("GET", new_uri (a_path))
-			-- l_request.add_header (l_request.accept_type_header_name, l_request.default_accept_type)
+			l_request.add_header (l_request.accept_type_header_name, l_request.default_accept_type)
 			Result := l_request.execute
 		end
 
 feature -- Clear
 
-	clear_all_query_settings
+	clear_all_query_values
+			-- Clears all query values.
 		do
 			print_format := Void
 			is_shallow := False
