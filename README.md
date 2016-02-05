@@ -437,7 +437,8 @@ I executed the following commands in application.e.
 	response := api.put (Void, "{%"keyA%": %"valueA%"}")
 	response := test.test_get ("/keyA", "valueA")
 
-This was the results from application.e. (https://drive.google.com/file/d/0B8gBdFqk27a8VFQ4RkhGcnlfdmc/view?usp=sharing)
+This was the results from application.e.
+(https://raw.githubusercontent.com/blank23/Redwood/b23efe72ced54ebdf2811447a8fa82b618621b46/other/Result%20of%20Executing%20Application.png)
 
 Afterwards, I executed the equivalent comments in a shell script test.sh.
 
@@ -445,7 +446,8 @@ Afterwards, I executed the equivalent comments in a shell script test.sh.
     curl -X PUT -d '{"keyA": "valueA"}' "https://samplechat.firebaseio-demo.com/.json"
     curl "https://samplechat.firebaseio-demo.com/keyA.json"
 
-This was the result from the shell script.(https://drive.google.com/file/d/0B8gBdFqk27a8cHJIZzRrcTBVNjA/view?usp=sharing)
+This was the result from the shell script.
+(https://raw.githubusercontent.com/blank23/Redwood/b23efe72ced54ebdf2811447a8fa82b618621b46/other/Result%20of%20Executing%20Bash%20Script.png)
 
 The result from the shell script was the result that I had expected from executing application.e. From evaluation, I believe that the application class did not provide the expected results due to asynchronous issues. This issue has led to assertion failures and has hindered me from completely validating the tests in the test_rest_api.e file. I have created tests for GET, PUT and DELETE. Once this is resolved, tests should be also created for POST and PATCH.
 
