@@ -1,7 +1,7 @@
 note
-	description : "test_redwood application root class"
-	date        : "$Date$"
-	revision    : "$Revision$"
+	description: "Application"
+	date: "$Date$"
+	revision: "$Revision$"
 
 class
 	APPLICATION
@@ -14,59 +14,31 @@ create
 
 feature {NONE} -- Initialization
 
-	make
-			-- Run application.
+    make
 		local
-			l_firebase: FIREBASE_API
-		do
-			create l_firebase.make ("https://SampleChat.firebaseIO-demo.com")
-			-- Get
-			if attached {RESPONSE} l_firebase.get ("/users/jack/name") as l_response then
-				print ("%NGET")
-				print ("%NStatus:"+l_response.status.out +"%N")
-				if attached l_response.body as l_body then
-					print ("%NBody:"+l_body+"%N")
-				end
-			end
+			api: FIREBASE_API
+			response: detachable RESPONSE
+			test: TEST_REST_API
+        do
+			create test
+			create api.make ("https://samplechat.firebaseio-demo.com")
 
-			-- Put
-			if attached {RESPONSE} l_firebase.put ("/users/jack/name","{ %"first%": %"Jack%", %"last%": %"Sparrow%" }") as l_response then
-				print ("%NPUT")
-				print ("%NStatus:"+l_response.status.out +"%N")
-				if attached l_response.body as l_body then
-					print ("%NBody:"+l_body+"%N")
-				end
-			end
+			-- Testing GET
+			-- Clearing database, putting objects into the database and then testing.
+			response := api.delete(Void)
+			response := api.put (Void, "{%"keyA%": %"valueA%"}")
+			response := test.test_get ("/keyA", "valueA")
 
-			-- Post
-			if attached {RESPONSE} l_firebase.post ("/users/jack/name","{%"user_id%" : %"jack%", %"text%" : %"Ahoy!%"}") as l_response then
-				print ("%NPOST")
-				print ("%NStatus:"+l_response.status.out +"%N")
-				if attached l_response.body as l_body then
-					print ("%NBody:"+l_body+"%N")
-				end
-			end
+			-- Testing PUT
+			-- Clearing database and then testing.
+			-- response := api.delete(Void)
+			-- response := test.test_put (Void, "{%"keyA%": %"valueA%"}", "valueA", "/keyA")
 
-
-			-- Patch
-			if attached {RESPONSE} l_firebase.patch ("/users/jack/name/","{%"last%":%"Jones%"}") as l_response then
-				print ("%NPATCH")
-				print ("%NStatus:"+l_response.status.out +"%N")
-				if attached l_response.body as l_body then
-					print ("%NBody:"+l_body+"%N")
-				end
-			end
-
-			-- Delete
-			if attached {RESPONSE} l_firebase.delete ("/users/jack/name/last") as l_response then
-				print ("%NDELETE")
-				print ("%NStatus:"+l_response.status.out +"%N")
-				if attached l_response.body as l_body then
-					print ("%NBody:"+l_body+"%N")
-				end
-			end
-
-
-		end
+			-- Testing DELETE
+			-- Clearing database, putting objects into the database and then deleting.
+			-- response := api.delete(Void)
+			-- response := api.put (Void, "{%"keyA%": %"valueA%"}")
+			-- response := test.test_delete ("/keyA")
+        end
 
 end
